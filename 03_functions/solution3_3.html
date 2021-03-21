@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bohnen zählen</title>
+  </head>
+  <body>
+    <script>
+      // // count Bs 1st Version
+      // function countBs(string) {
+      //   let counter = 0;
+      //   for (let i = 0; i < string.length; i++) {
+      //     if (string[i] === 'B') {
+      //       counter++;
+      //     }
+      //   }
+      //   return counter;
+      // }
+      // console.log(countBs('BabBel'));
+
+      // count different chars
+      function countChar(string, ch) {
+        let counter = 0;
+        for (let i = 0; i < string.length; i++) {
+          if (string[i] === ch) {
+            counter++;
+          }
+        }
+        return counter;
+      }
+      console.log(countChar('BabBelll', 'l'));
+
+      // countBs 2nd Version
+      function countBs(string) {
+        return countChar(string, 'B');
+      }
+      console.log(countBs('BabBel'));
+    </script>
+  </body>
+</html>
