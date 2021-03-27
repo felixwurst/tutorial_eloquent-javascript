@@ -19,7 +19,7 @@
         return list;
       }
       // console.log(arrayToList([1, 2, 3]));
-      // {value: 1, rest: {value: 2, rest: {value: 3, rest: null}}}
+      // -> {value: 1, rest: {value: 2, rest: {value: 3, rest: null}}}
 
       function listToArray(list) {
         let array = [];
@@ -29,13 +29,13 @@
         return array;
       }
       // console.log(listToArray(arrayToList([1, 2, 3])));
-      // [1, 2, 3]
+      // -> [1, 2, 3]
 
       function prepend(value, list) {
         return {value, rest: list};
       }
       // console.log(prepend(1, prepend(2, null)));
-      // {value: 1, rest: {value: 2, rest: null}}
+      // -> {value: 1, rest: {value: 2, rest: null}}
 
       function nth(list, n) {
         if (!list) return undefined;
@@ -43,7 +43,7 @@
         else return nth(list.rest, n - 1);
       }
       console.log(nth(arrayToList([1, 2, 3]), 1));
-      // 2
+      // -> 2
     </script>
   </body>
 </html>
