@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vorherrschende Schreibrichtung</title>
+  </head>
+  <body>
+    <script src="../code/scripts.js"></script>
+    <script>
+      function characterScript(code) {
+        for (let script of SCRIPTS) {
+          if (
+            script.ranges.some(([from, to]) => {
+              return code >= from && code < to;
+            })
+          ) {
+            return script;
+          }
+        }
+        return null;
+      }
+
+      function countBy(items, groupName) {
+        let counts = [];
+        for (let item of items) {
+          let name = groupName(item);
+          let known = counts.findIndex(c => c.name == name);
+          if (known == -1) {
+            counts.push({name, count: 1});
+          } else {
+            counts[known].count++;
+          }
+        }
+        return counts;
+      }
+
+      function dominantDirection(text) {
+        let counted = countBy(text, char => {
+          let script = characterScript(char.codePointAt(0));
+          return script ? script.direction : 'none';
+        }).filter(({name}) => name != 'none');
+
+        if (counted.length === 0) return 'nothing counted';
+        return counted.reduce((a, b) => (a.count > b.count ? a : b)).name;
+      }
+
+      console.log(dominantDirection(' '));
+      // -> No scripts found
+      console.log(dominantDirection('Hello!'));
+      // ->  ltr
+      console.log(dominantDirection('Hey, مساء الخير'));
+      // -> rtl
+    </script>
+  </body>
+</html>
