@@ -7,6 +7,35 @@
     <title>Ein Vektortyp</title>
   </head>
   <body>
-    <script></script>
+    <script>
+      class Vec {
+        constructor(x, y) {
+          this.x = x;
+          this.y = y;
+        }
+        plus(vec) {
+          let newVec = {
+            x: this.x + vec.x,
+            y: this.y + vec.y,
+          };
+          return newVec;
+        }
+        minus(vec) {
+          let newVec = {
+            x: this.x - vec.x,
+            y: this.y - vec.y,
+          };
+          return newVec;
+        }
+      }
+
+      const vec1 = new Vec(2, 0);
+      const vec2 = new Vec(0, 2);
+
+      console.log(vec1);
+      console.log(vec2);
+      console.log(vec1.plus(vec2));
+      console.log(vec1.minus(vec2));
+    </script>
   </body>
 </html>
