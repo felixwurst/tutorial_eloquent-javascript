@@ -7,6 +7,41 @@
     <title>Gruppen</title>
   </head>
   <body>
-    <script></script>
+    <script>
+      class Group {
+        constructor() {
+          this.group = {};
+        }
+        add(name, num) {
+          if (!(name in this.group)) this.group[name] = num;
+          return this.group;
+        }
+        delete(name) {
+          if (name in this.group) delete this.group[name];
+          return this.group;
+        }
+        has(name) {
+          return name in this.group;
+        }
+        static from(obj) {
+          return obj;
+        }
+      }
+      const group1 = new Group();
+
+      console.log(group1);
+      console.log(group1.add('seats', 2));
+      console.log(group1.add('wheels', 4));
+      console.log(group1.delete('seats'));
+      console.log(group1.has('seats'));
+      console.log(group1.has('wheels'));
+
+      const object = {
+        seats: 4,
+        wheels: 6,
+      };
+
+      console.log(Group.from(object));
+    </script>
   </body>
 </html>
