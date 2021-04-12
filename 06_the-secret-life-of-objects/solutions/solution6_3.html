@@ -7,6 +7,60 @@
     <title>Iterierbare Gruppen</title>
   </head>
   <body>
-    <script></script>
+    <script>
+      class Group {
+        constructor() {
+          this.group = [];
+        }
+        add(element) {
+          if (!this.group.includes(element)) this.group.push(element);
+          return this.group;
+        }
+        delete(element) {
+          if (this.group.includes(element))
+            this.group = this.group.filter(item => item !== element);
+          return this.group;
+        }
+        has(element) {
+          return this.group.includes(element);
+        }
+        static from(...elements) {
+          const newGroup = new Group();
+          for (const element of elements) {
+            newGroup.add(element);
+          }
+          return newGroup;
+        }
+        [Symbol.iterator] = function () {
+          return new GroupIterator(this);
+        };
+      }
+      // Group.prototype[Symbol.iterator] = function () {
+      //   return new GroupIterator(this);
+      // };
+
+      class GroupIterator {
+        constructor(group) {
+          this.pos = 0;
+          this.group = group.group;
+        }
+        next() {
+          if (this.pos == this.group.length) return {done: true};
+          let value = {
+            pos: this.pos,
+            value: this.group[this.pos],
+          };
+          this.pos++;
+          return {value, done: false};
+        }
+      }
+
+      const group = Group.from(1, 5, 'wheels');
+      // console.log(group.group);
+
+      for (const element of group) {
+        console.log(element);
+      }
+    </script>
   </body>
 </html>

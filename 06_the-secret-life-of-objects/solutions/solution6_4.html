@@ -7,6 +7,22 @@
     <title>Eine Methode ausborgen</title>
   </head>
   <body>
-    <script></script>
+    <script>
+      // const hasOwnProperty = Symbol('hasOwnProperty');
+      // let obj = {
+      //   wheels: 4,
+      //   seats: 2,
+      //   [hasOwnProperty]: 'no',
+      // };
+      // console.log(obj.hasOwnProperty('wheels'));
+
+      let obj = {
+        wheels: 4,
+        seats: 2,
+        hasOwnProperty: true,
+      };
+      console.log(Object.prototype.hasOwnProperty.call(obj, 'wheels'));
+      // -> true
+    </script>
   </body>
 </html>

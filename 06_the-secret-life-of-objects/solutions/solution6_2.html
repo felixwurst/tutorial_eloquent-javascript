@@ -10,38 +10,39 @@
     <script>
       class Group {
         constructor() {
-          this.group = {};
+          this.group = [];
         }
-        add(name, num) {
-          if (!(name in this.group)) this.group[name] = num;
+        add(element) {
+          if (!this.group.includes(element)) this.group.push(element);
           return this.group;
         }
-        delete(name) {
-          if (name in this.group) delete this.group[name];
+        delete(element) {
+          if (this.group.includes(element))
+            this.group = this.group.filter(item => item !== element);
           return this.group;
         }
-        has(name) {
-          return name in this.group;
+        has(element) {
+          return this.group.includes(element);
         }
-        static from(obj) {
-          return obj;
+        static from(...elements) {
+          const newGroup = new Group();
+          for (const element of elements) {
+            newGroup.add(element);
+          }
+          return newGroup;
         }
       }
       const group1 = new Group();
 
       console.log(group1);
-      console.log(group1.add('seats', 2));
-      console.log(group1.add('wheels', 4));
+      console.log(group1.add(2));
+      console.log(group1.add(4));
+      console.log(group1.add(2));
+      console.log(group1.add('seats'));
+      console.log(group1.has('seats'));
       console.log(group1.delete('seats'));
       console.log(group1.has('seats'));
-      console.log(group1.has('wheels'));
-
-      const object = {
-        seats: 4,
-        wheels: 6,
-      };
-
-      console.log(Group.from(object));
+      console.log(Group.from(1, 5, 'wheels'));
     </script>
   </body>
 </html>
