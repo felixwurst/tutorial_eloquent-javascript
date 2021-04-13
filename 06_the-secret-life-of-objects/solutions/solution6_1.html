@@ -13,33 +13,23 @@
           this.x = x;
           this.y = y;
         }
-        plus(vec) {
-          let newVec = {
-            x: this.x + vec.x,
-            y: this.y + vec.y,
-          };
-          return newVec;
+        plus(other) {
+          return new Vec(this.x + other.x, this.y + other.y);
         }
-        minus(vec) {
-          let newVec = {
-            x: this.x - vec.x,
-            y: this.y - vec.y,
-          };
-          return newVec;
+        minus(other) {
+          return new Vec(this.x - other.x, this.y - other.y);
         }
         get length() {
           return Math.sqrt(Math.pow(this.x, 2) + Math.pow(this.y, 2));
         }
       }
 
-      const vec1 = new Vec(2, 2);
-      const vec2 = new Vec(0, 2);
-
-      console.log(vec1);
-      console.log(vec2);
-      console.log(vec1.plus(vec2));
-      console.log(vec1.minus(vec2));
-      console.log(vec1.length);
+      console.log(new Vec(2, 2).plus(new Vec(0, 2)));
+      // -> Vec{x: 2, y: 4}
+      console.log(new Vec(2, 2).minus(new Vec(0, 2)));
+      // -> Vec{x: 2, y: 0}
+      console.log(new Vec(3, 4).length);
+      // -> 5
     </script>
   </body>
 </html>

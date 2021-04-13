@@ -10,39 +10,41 @@
     <script>
       class Group {
         constructor() {
-          this.group = [];
+          this.members = [];
         }
-        add(element) {
-          if (!this.group.includes(element)) this.group.push(element);
-          return this.group;
+        add(value) {
+          if (!this.has(value)) this.members.push(value);
+          // return this.members;
         }
-        delete(element) {
-          if (this.group.includes(element))
-            this.group = this.group.filter(item => item !== element);
-          return this.group;
+        delete(value) {
+          if (this.has(value))
+            this.members = this.members.filter(item => item !== value);
+          // return this.members;
         }
-        has(element) {
-          return this.group.includes(element);
+        has(value) {
+          return this.members.includes(value);
         }
-        static from(...elements) {
-          const newGroup = new Group();
-          for (const element of elements) {
-            newGroup.add(element);
+        static from(...values) {
+          const group = new Group();
+          for (const value of values) {
+            group.add(value);
           }
-          return newGroup;
+          return group;
         }
       }
-      const group1 = new Group();
 
-      console.log(group1);
-      console.log(group1.add(2));
-      console.log(group1.add(4));
-      console.log(group1.add(2));
-      console.log(group1.add('seats'));
-      console.log(group1.has('seats'));
-      console.log(group1.delete('seats'));
-      console.log(group1.has('seats'));
-      console.log(Group.from(1, 5, 'wheels'));
+      const group = Group.from(1, 5);
+
+      console.log(group.has(1));
+      // -> true
+      console.log(group.has(2));
+      // -> false
+      group.add(2);
+      console.log(group.has(2));
+      // -> true
+      group.delete(2);
+      console.log(group.has(2));
+      // -> false
     </script>
   </body>
 </html>

@@ -10,57 +10,55 @@
     <script>
       class Group {
         constructor() {
-          this.group = [];
+          this.members = [];
         }
-        add(element) {
-          if (!this.group.includes(element)) this.group.push(element);
-          return this.group;
+        add(value) {
+          if (!this.has(value)) this.members.push(value);
         }
-        delete(element) {
-          if (this.group.includes(element))
-            this.group = this.group.filter(item => item !== element);
-          return this.group;
+        delete(value) {
+          if (this.has(value))
+            this.members = this.members.filter(item => item !== value);
         }
-        has(element) {
-          return this.group.includes(element);
+        has(value) {
+          return this.members.includes(value);
         }
-        static from(...elements) {
-          const newGroup = new Group();
-          for (const element of elements) {
-            newGroup.add(element);
+        static from(...values) {
+          const group = new Group();
+          for (const value of values) {
+            group.add(value);
           }
-          return newGroup;
+          return group;
         }
-        [Symbol.iterator] = function () {
+        [Symbol.iterator]() {
           return new GroupIterator(this);
-        };
+        }
       }
-      // Group.prototype[Symbol.iterator] = function () {
-      //   return new GroupIterator(this);
-      // };
 
       class GroupIterator {
         constructor(group) {
+          this.group = group;
           this.pos = 0;
-          this.group = group.group;
         }
         next() {
-          if (this.pos == this.group.length) return {done: true};
-          let value = {
-            pos: this.pos,
-            value: this.group[this.pos],
-          };
-          this.pos++;
-          return {value, done: false};
+          if (this.pos >= this.group.members.length) {
+            return {done: true};
+          } else {
+            let result = {
+              value: this.group.members[this.pos],
+              done: false,
+            };
+            this.pos++;
+            return result;
+          }
         }
       }
 
-      const group = Group.from(1, 5, 'wheels');
-      // console.log(group.group);
-
-      for (const element of group) {
-        console.log(element);
+      for (const value of Group.from(1, 8, 7)) {
+        console.log(value);
       }
+      // -> 1
+      // -> 8
+      // -> 7
     </script>
   </body>
 </html>
