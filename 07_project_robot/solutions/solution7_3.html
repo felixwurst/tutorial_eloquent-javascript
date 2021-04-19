@@ -9,18 +9,16 @@
   <body>
     <script>
       class PGroup {
-        constructor(value) {
-          this.members = value;
+        constructor(members) {
+          this.members = members;
         }
         add(value) {
-          // if (!this.has(value)) {
-          return new PGroup(this.members.concat(value));
-          // }
+          if (this.has(value)) return this;
+          return new PGroup(this.members.concat([value]));
         }
         delete(value) {
-          // if (this.has(value)) {
-          return new PGroup(this.members.filter(item => item !== value));
-          // }
+          if (!this.has(value)) return this;
+          return new PGroup(this.members.filter(member => member !== value));
         }
         has(value) {
           return this.members.includes(value);
@@ -28,20 +26,23 @@
       }
       PGroup.empty = new PGroup([]);
       console.log(PGroup.empty);
-
+      // -> PGroup {members: Array(0)}
       let a = PGroup.empty.add('a');
       console.log(a);
+      // -> PGroup {members: Array(1)}
       let ab = a.add('b');
       console.log(ab);
+      // -> PGroup {members: Array(2)}
       let b = ab.delete('a');
       console.log(b);
+      // -> PGroup {members: Array(1)}
 
       console.log(b.has('b'));
-      // → true
+      // -> true
       console.log(a.has('b'));
-      // → false
+      // -> false
       console.log(b.has('a'));
-      // → false
+      // -> false
     </script>
   </body>
 </html>
