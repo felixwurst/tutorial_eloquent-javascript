@@ -18,8 +18,33 @@
         }
       }
 
+      // recursive version
       function reliableMultiply(a, b) {
-        // Your code here.
+        try {
+          return primitiveMultiply(a, b);
+        } catch (error) {
+          if (error instanceof MultiplicatorUnitFailure) {
+            console.log(error.message);
+            return reliableMultiply(a, b);
+          } else {
+            throw error;
+          }
+        }
+      }
+
+      // loop version
+      function reliableMultiply(a, b) {
+        for (;;) {
+          try {
+            return primitiveMultiply(a, b);
+          } catch (error) {
+            if (!(error instanceof MultiplicatorUnitFailure)) {
+              throw error;
+            } else {
+              console.log(error.message);
+            }
+          }
+        }
       }
 
       console.log(reliableMultiply(8, 8));

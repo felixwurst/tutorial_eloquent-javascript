@@ -23,20 +23,37 @@
         },
       };
 
+      // box.locked = false;
+
       function withBoxUnlocked(body) {
-        // Your code here.
+        let boxWasLocked = box.locked;
+        try {
+          if (box.locked) {
+            box.unlock();
+            console.log(box.locked);
+          }
+          body();
+          console.log(box.content);
+        } catch (error) {
+          console.log(error.message);
+        } finally {
+          if (boxWasLocked) {
+            box.lock();
+            console.log(box.locked);
+          }
+        }
       }
 
-      withBoxUnlocked(function () {
-        box.content.push('gold piece');
-      });
+      // withBoxUnlocked(function () {
+      //   box.content.push('gold piece');
+      // });
 
       try {
         withBoxUnlocked(function () {
           throw new Error('Pirates on the horizon! Abort!');
         });
-      } catch (e) {
-        console.log('Error raised: ' + e);
+      } catch (error) {
+        console.log('Error raised: ' + error);
       }
       console.log(box.locked);
       // → true
