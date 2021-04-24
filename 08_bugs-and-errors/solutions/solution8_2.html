@@ -26,27 +26,29 @@
       // box.locked = false;
 
       function withBoxUnlocked(body) {
-        let boxWasLocked = box.locked;
+        console.log('locked: ', box.locked);
+        if (!box.locked) {
+          return body();
+        }
+
+        box.unlock();
+        console.log('locked: ', box.locked);
         try {
-          if (box.locked) {
-            box.unlock();
-            console.log(box.locked);
-          }
-          body();
-          console.log(box.content);
+          return body();
         } catch (error) {
           console.log(error.message);
         } finally {
-          if (boxWasLocked) {
-            box.lock();
-            console.log(box.locked);
-          }
+          console.log('content: ', box.content);
+          box.lock();
+          console.log('locked: ', box.locked);
         }
       }
 
-      // withBoxUnlocked(function () {
-      //   box.content.push('gold piece');
-      // });
+      withBoxUnlocked(function () {
+        box.content.push('gold piece');
+      });
+
+      console.log('-------------------------');
 
       try {
         withBoxUnlocked(function () {
@@ -55,8 +57,6 @@
       } catch (error) {
         console.log('Error raised: ' + error);
       }
-      console.log(box.locked);
-      // → true
     </script>
   </body>
 </html>
