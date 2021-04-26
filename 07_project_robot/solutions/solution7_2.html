@@ -8,6 +8,7 @@
   </head>
   <body>
     <script src="../chapter/07_robot.js"></script>
+    <script src="../animatevillage.js"></script>
     <script>
       function countSteps(state, robot, memory) {
         for (let steps = 0; ; steps++) {
@@ -50,6 +51,7 @@
         return {direction: route[0], memory: route.slice(1)};
       }
       console.log(countSteps(VillageState.random(), myRobot, []));
+      runRobotAnimation(VillageState.random(), myRobot, []);
 
       function compareRobots(robot1, memory1, robot2, memory2) {
         let tasks = 100;
