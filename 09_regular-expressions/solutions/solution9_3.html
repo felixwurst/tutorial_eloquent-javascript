@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Numbers again</title>
+  </head>
+  <body>
+    <script>
+      // Fill in this regular expression.
+      let number = /^...$/;
+
+      // Tests:
+      for (let str of [
+        '1',
+        '-1',
+        '+15',
+        '1.55',
+        '.5',
+        '5.',
+        '1.3e2',
+        '1E-4',
+        '1e+12',
+      ]) {
+        if (!number.test(str)) {
+          console.log(`Failed to match '${str}'`);
+        }
+      }
+      for (let str of [
+        '1a',
+        '+-1',
+        '1.2.3',
+        '1+1',
+        '1e4.5',
+        '.5.',
+        '1f5',
+        '.',
+      ]) {
+        if (number.test(str)) {
+          console.log(`Incorrectly accepted '${str}'`);
+        }
+      }
+    </script>
+  </body>
+</html>
