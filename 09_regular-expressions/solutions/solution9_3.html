@@ -8,8 +8,7 @@
   </head>
   <body>
     <script>
-      // Fill in this regular expression.
-      let number = /^...$/;
+      let number = /^[+\-]?(\d+(\.\d*)?|\.\d+)([eE][+\-]?\d+)?$/;
 
       // Tests:
       for (let str of [
@@ -20,8 +19,11 @@
         '.5',
         '5.',
         '1.3e2',
-        '1E-4',
         '1e+12',
+        '5e-3',
+        '1E10',
+        '7E+3',
+        '1E-4',
       ]) {
         if (!number.test(str)) {
           console.log(`Failed to match '${str}'`);
