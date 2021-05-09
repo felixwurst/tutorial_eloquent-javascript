@@ -1,4 +1,4 @@
-exports.buildGraph = function (edges) {
+export default function buildGraph(edges) {
   let graph = Object.create(null);
   function addEdge(from, to) {
     if (graph[from] == null) {
