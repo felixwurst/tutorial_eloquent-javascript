@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>A modular robot</title>
+    <script type="module">
+      import {VillageState, runRobot} from './modules/state.js';
+      import {
+        randomRobot,
+        routeRobot,
+        goalOrientedRobot,
+      } from './modules/example-robot.js';
+
+      runRobot(VillageState.random(), goalOrientedRobot, []);
+    </script>
+  </head>
+  <body></body>
+</html>

@@ -1,5 +1,5 @@
-import roadGraph from "./roads.js";
-import randomPick from "./randomPick.js";
+import roadGraph from './roads.js';
+import randomPick from './randomPick.js';
 
 var VillageState = class VillageState {
   constructor(place, parcels) {
@@ -13,7 +13,7 @@ var VillageState = class VillageState {
       let parcels = this.parcels
         .map(p => {
           if (p.place != this.place) return p;
-          return { place: destination, address: p.address };
+          return {place: destination, address: p.address};
         })
         .filter(p => p.place != p.address);
       return new VillageState(destination, parcels);
@@ -29,7 +29,7 @@ VillageState.random = function (parcelCount = 5) {
     do {
       place = randomPick(Object.keys(roadGraph));
     } while (place == address);
-    parcels.push({ place, address });
+    parcels.push({place, address});
   }
   return new VillageState('Post Office', parcels);
 };
@@ -47,4 +47,4 @@ function runRobot(state, robot, memory) {
   }
 }
 
-export { VillageState, runRobot };
+export {VillageState, runRobot};
