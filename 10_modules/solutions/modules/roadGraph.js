@@ -1,5 +1,3 @@
-import buildGraph from './graph.js';
-
 var roads = [
   "Alice's House-Bob's House",
   "Alice's House-Cabin",
@@ -16,6 +14,22 @@ var roads = [
   'Marketplace-Town Hall',
   'Shop-Town Hall',
 ];
+
+function buildGraph(edges) {
+  let graph = Object.create(null);
+  function addEdge(from, to) {
+    if (graph[from] == null) {
+      graph[from] = [to];
+    } else {
+      graph[from].push(to);
+    }
+  }
+  for (let [from, to] of edges) {
+    addEdge(from, to);
+    addEdge(to, from);
+  }
+  return graph;
+}
 
 var roadGraph = buildGraph(roads.map(r => r.split('-')));
 export default roadGraph;
