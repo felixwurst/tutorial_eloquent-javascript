@@ -1,4 +1,4 @@
-import roadGraph from './roads.js';
+import roadGraph from './roadGraph.js';
 import randomPick from './randomPick.js';
 
 var VillageState = class VillageState {
@@ -34,17 +34,4 @@ VillageState.random = function (parcelCount = 5) {
   return new VillageState('Post Office', parcels);
 };
 
-function runRobot(state, robot, memory) {
-  for (let turn = 0; ; turn++) {
-    if (state.parcels.length == 0) {
-      console.log(`Done in ${turn} turns`);
-      break;
-    }
-    let action = robot(state, memory);
-    state = state.move(action.direction);
-    memory = action.memory;
-    console.log(`Moved to ${action.direction}`);
-  }
-}
-
-export {VillageState, runRobot};
+export default VillageState;
