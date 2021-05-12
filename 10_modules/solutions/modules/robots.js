@@ -1,10 +1,12 @@
-import roadGraph from './roads.js';
+import roadGraph from './roadGraph.js';
 import randomPick from './randomPick.js';
 
+// randomRobot
 function randomRobot(state) {
   return {direction: randomPick(roadGraph[state.place])};
 }
 
+// routeRobot
 var mailRoute = [
   "Alice's House",
   'Cabin',
@@ -28,6 +30,7 @@ function routeRobot(state, memory) {
   return {direction: memory[0], memory: memory.slice(1)};
 }
 
+// goalOrientedRobot
 function findRoute(graph, from, to) {
   let work = [{at: from, route: []}];
   for (let i = 0; i < work.length; i++) {
