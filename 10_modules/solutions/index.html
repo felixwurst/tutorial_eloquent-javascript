@@ -6,13 +6,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>A modular robot</title>
     <script type="module">
-      import {VillageState, runRobot} from './modules/state.js';
+      import VillageState from './modules/state.js';
       import {
         randomRobot,
         routeRobot,
         goalOrientedRobot,
-      } from './modules/example-robot.js';
+      } from './modules/robots.js';
 
+      function runRobot(state, robot, memory) {
+        for (let turn = 0; ; turn++) {
+          if (state.parcels.length == 0) {
+            console.log(`Done in ${turn} turns`);
+            break;
+          }
+          let action = robot(state, memory);
+          state = state.move(action.direction);
+          memory = action.memory;
+          console.log(`Moved to ${action.direction}`);
+        }
+      }
+
+      // runRobot(VillageState.random(), randomRobot, []);
+      // runRobot(VillageState.random(), routeRobot, []);
       runRobot(VillageState.random(), goalOrientedRobot, []);
     </script>
   </head>
