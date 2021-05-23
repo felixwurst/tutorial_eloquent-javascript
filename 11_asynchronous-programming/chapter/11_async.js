@@ -1,8 +1,8 @@
-var bigOak = require("./crow-tech").bigOak;
+var bigOak = require('./crow-tech').bigOak;
 
-var defineRequestType = require("./crow-tech").defineRequestType;
+var defineRequestType = require('./crow-tech').defineRequestType;
 
-defineRequestType("note", (nest, content, source, done) => {
+defineRequestType('note', (nest, content, source, done) => {
   console.log(`${nest.name} received note: ${content}`);
   done();
 });
@@ -13,7 +13,7 @@ function storage(nest, name) {
   });
 }
 
-var Timeout = class Timeout extends Error {}
+var Timeout = class Timeout extends Error {};
 
 function request(nest, target, type, content) {
   return new Promise((resolve, reject) => {
@@ -27,7 +27,7 @@ function request(nest, target, type, content) {
       setTimeout(() => {
         if (done) return;
         else if (n < 3) attempt(n + 1);
-        else reject(new Timeout("Timed out"));
+        else reject(new Timeout('Timed out'));
       }, 250);
     }
     attempt(1);
@@ -35,31 +35,33 @@ function request(nest, target, type, content) {
 }
 
 function requestType(name, handler) {
-  defineRequestType(name, (nest, content, source,
-                           callback) => {
+  defineRequestType(name, (nest, content, source, callback) => {
     try {
-      Promise.resolve(handler(nest, content, source))
-        .then(response => callback(null, response),
-              failure => callback(failure));
+      Promise.resolve(handler(nest, content, source)).then(
+        response => callback(null, response),
+        failure => callback(failure)
+      );
     } catch (exception) {
       callback(exception);
     }
   });
 }
 
-requestType("ping", () => "pong");
+requestType('ping', () => 'pong');
 
 function availableNeighbors(nest) {
   let requests = nest.neighbors.map(neighbor => {
-    return request(nest, neighbor, "ping")
-      .then(() => true, () => false);
+    return request(nest, neighbor, 'ping').then(
+      () => true,
+      () => false
+    );
   });
   return Promise.all(requests).then(result => {
     return nest.neighbors.filter((_, i) => result[i]);
   });
 }
 
-var everywhere = require("./crow-tech").everywhere;
+var everywhere = require('./crow-tech').everywhere;
 
 everywhere(nest => {
   nest.state.gossip = [];
@@ -69,22 +71,20 @@ function sendGossip(nest, message, exceptFor = null) {
   nest.state.gossip.push(message);
   for (let neighbor of nest.neighbors) {
     if (neighbor == exceptFor) continue;
-    request(nest, neighbor, "gossip", message);
+    request(nest, neighbor, 'gossip', message);
   }
 }
 
-requestType("gossip", (nest, message, source) => {
+requestType('gossip', (nest, message, source) => {
   if (nest.state.gossip.includes(message)) return;
-  console.log(`${nest.name} received gossip '${
-               message}' from ${source}`);
+  console.log(`${nest.name} received gossip '${message}' from ${source}`);
   sendGossip(nest, message, source);
 });
 
-requestType("connections", (nest, {name, neighbors},
-                            source) => {
+requestType('connections', (nest, {name, neighbors}, source) => {
   let connections = nest.state.connections;
-  if (JSON.stringify(connections.get(name)) ==
-      JSON.stringify(neighbors)) return;
+  if (JSON.stringify(connections.get(name)) == JSON.stringify(neighbors))
+    return;
   connections.set(name, neighbors);
   broadcastConnections(nest, name, source);
 });
@@ -92,9 +92,9 @@ requestType("connections", (nest, {name, neighbors},
 function broadcastConnections(nest, name, exceptFor = null) {
   for (let neighbor of nest.neighbors) {
     if (neighbor == exceptFor) continue;
-    request(nest, neighbor, "connections", {
+    request(nest, neighbor, 'connections', {
       name,
-      neighbors: nest.state.connections.get(name)
+      neighbors: nest.state.connections.get(name),
     });
   }
 }
@@ -123,19 +123,17 @@ function routeRequest(nest, target, type, content) {
   if (nest.neighbors.includes(target)) {
     return request(nest, target, type, content);
   } else {
-    let via = findRoute(nest.name, target,
-                        nest.state.connections);
+    let via = findRoute(nest.name, target, nest.state.connections);
     if (!via) throw new Error(`No route to ${target}`);
-    return request(nest, via, "route",
-                   {target, type, content});
+    return request(nest, via, 'route', {target, type, content});
   }
 }
 
-requestType("route", (nest, {target, type, content}) => {
+requestType('route', (nest, {target, type, content}) => {
   return routeRequest(nest, target, type, content);
 });
 
-requestType("storage", (nest, name) => storage(nest, name));
+requestType('storage', (nest, name) => storage(nest, name));
 
 function findInStorage(nest, name) {
   return storage(nest, name).then(found => {
@@ -152,35 +150,41 @@ function findInRemoteStorage(nest, name) {
   let sources = network(nest).filter(n => n != nest.name);
   function next() {
     if (sources.length == 0) {
-      return Promise.reject(new Error("Not found"));
+      return Promise.reject(new Error('Not found'));
     } else {
-      let source = sources[Math.floor(Math.random() *
-                                      sources.length)];
+      let source = sources[Math.floor(Math.random() * sources.length)];
       sources = sources.filter(n => n != source);
-      return routeRequest(nest, source, "storage", name)
-        .then(value => value != null ? value : next(),
-              next);
+      return routeRequest(nest, source, 'storage', name).then(
+        value => (value != null ? value : next()),
+        next
+      );
     }
   }
   return next();
 }
 
 var Group = class Group {
-  constructor() { this.members = []; }
-  add(m) { this.members.add(m); }
-}
+  constructor() {
+    this.members = [];
+  }
+  add(m) {
+    this.members.add(m);
+  }
+};
 
 function anyStorage(nest, source, name) {
   if (source == nest.name) return storage(nest, name);
-  else return routeRequest(nest, source, "storage", name);
+  else return routeRequest(nest, source, 'storage', name);
 }
 
 async function chicks(nest, year) {
-  let list = "";
-  await Promise.all(network(nest).map(async name => {
-    list += `${name}: ${
-      await anyStorage(nest, name, `chicks in ${year}`)
-    }\n`;
-  }));
+  let list = '';
+  await Promise.all(
+    network(nest).map(async name => {
+      list += `${name}: ${await anyStorage(nest, name, `chicks in ${year}`)}\n`;
+    })
+  );
   return list;
 }
+
+console.log('Hello');
