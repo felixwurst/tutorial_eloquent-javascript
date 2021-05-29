@@ -60,6 +60,7 @@ function availableNeighbors(nest) {
     return nest.neighbors.filter((_, i) => result[i]);
   });
 }
+// availableNeighbors('Big Oak');
 
 var everywhere = require('./crow-tech').everywhere;
 
