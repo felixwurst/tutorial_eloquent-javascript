@@ -1,5 +1,5 @@
 var bigOak = require('./crow-tech').bigOak;
-
+// console.log(bigOak);
 var defineRequestType = require('./crow-tech').defineRequestType;
 
 defineRequestType('note', (nest, content, source, done) => {
@@ -49,6 +49,7 @@ function requestType(name, handler) {
 
 requestType('ping', () => 'pong');
 
+// ???
 function availableNeighbors(nest) {
   let requests = nest.neighbors.map(neighbor => {
     return request(nest, neighbor, 'ping').then(
@@ -60,7 +61,6 @@ function availableNeighbors(nest) {
     return nest.neighbors.filter((_, i) => result[i]);
   });
 }
-// availableNeighbors('Big Oak');
 
 var everywhere = require('./crow-tech').everywhere;
 
@@ -108,6 +108,7 @@ everywhere(nest => {
 
 function findRoute(from, to, connections) {
   let work = [{at: from, via: null}];
+  // console.log(work);
   for (let i = 0; i < work.length; i++) {
     let {at, via} = work[i];
     for (let next of connections.get(at) || []) {
@@ -121,10 +122,15 @@ function findRoute(from, to, connections) {
 }
 
 function routeRequest(nest, target, type, content) {
+  // console.log(nest.neighbors);
   if (nest.neighbors.includes(target)) {
+    // console.log('Here');
     return request(nest, target, type, content);
   } else {
+    // console.log('Here2');
     let via = findRoute(nest.name, target, nest.state.connections);
+    // console.log(via);
+    // console.log(nest.state.connections);
     if (!via) throw new Error(`No route to ${target}`);
     return request(nest, via, 'route', {target, type, content});
   }
@@ -133,6 +139,8 @@ function routeRequest(nest, target, type, content) {
 requestType('route', (nest, {target, type, content}) => {
   return routeRequest(nest, target, type, content);
 });
+
+// routeRequest(bigOak, 'Cow Pasture', 'route', 'Hello');
 
 requestType('storage', (nest, name) => storage(nest, name));
 
@@ -188,4 +196,5 @@ async function chicks(nest, year) {
   return list;
 }
 
-console.log('Hello');
+// console.log('End');
+// findInStorage(bigOak, 'events on 2017-12-21').then(console.log);
