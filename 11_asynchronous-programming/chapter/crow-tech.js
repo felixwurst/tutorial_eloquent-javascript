@@ -1,4 +1,5 @@
 (function () {
+  // ---------------------------------------- Connections ----------------------------------------
   const connections = [
     'Church Tower-Sportsgrounds',
     'Church Tower-Big Maple',
@@ -23,6 +24,7 @@
     'Chateau-Butcher Shop',
   ];
 
+  // ---------------------------------------- Storage ----------------------------------------
   function storageFor(name) {
     let storage = Object.create(null);
     storage['food caches'] = [
@@ -42,7 +44,12 @@
       'That one-legged jackdaw',
       'The boy with the airgun',
     ];
-    if (name == 'Church Tower' || name == 'Hawthorn' || name == 'Chateau')
+    if (
+      name == 'Church Tower' ||
+      name == 'Hawthorn' ||
+      name == 'Chateau' ||
+      name == 'Big Oak'
+    )
       storage['events on 2017-12-21'] =
         "Deep snow. Butcher's garbage can fell over. We chased off the ravens from Saint-Vulbas.";
     let hash = 0;
@@ -62,6 +69,7 @@
     return storage;
   }
 
+  // ---------------------------------------- Network ----------------------------------------
   class Network {
     constructor(connections, storageFor) {
       // reachable: {
@@ -107,6 +115,7 @@
     }
   }
 
+  // ---------------------------------------- Node ----------------------------------------
   const $storage = Symbol('storage'),
     $network = Symbol('network');
 
@@ -154,6 +163,7 @@
     }
   }
 
+  // ---------------------------------------- Exports ----------------------------------------
   let network = new Network(connections, storageFor);
   exports.bigOak = network.nodes['Big Oak'];
   exports.everywhere = network.everywhere.bind(network);
