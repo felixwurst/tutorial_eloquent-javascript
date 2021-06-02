@@ -1,5 +1,7 @@
 var bigOak = require('./crow-tech').bigOak;
 // console.log(bigOak);
+
+// ---------------------------------------- Callbacks ----------------------------------------
 var defineRequestType = require('./crow-tech').defineRequestType;
 
 defineRequestType('note', (nest, content, source, done) => {
@@ -7,12 +9,17 @@ defineRequestType('note', (nest, content, source, done) => {
   done();
 });
 
+// ---------------------------------------- Promises ----------------------------------------
 function storage(nest, name) {
   return new Promise(resolve => {
     nest.readStorage(name, result => resolve(result));
   });
 }
 
+// storage(bigOak, 'enemies').then(value => console.log('Got', value));
+// -> Got ["Farmer Jacques' dog", 'The butcher', 'That one-legged jackdaw', 'The boy with the airgun'];
+
+// ---------------------------------------- Networks are hard ----------------------------------------
 var Timeout = class Timeout extends Error {};
 
 function request(nest, target, type, content) {
@@ -47,6 +54,7 @@ function requestType(name, handler) {
   });
 }
 
+// ---------------------------------------- Collections of promises ----------------------------------------
 requestType('ping', () => 'pong');
 
 // ???
@@ -62,6 +70,7 @@ function availableNeighbors(nest) {
   });
 }
 
+// ---------------------------------------- Network flooding ----------------------------------------
 var everywhere = require('./crow-tech').everywhere;
 
 everywhere(nest => {
@@ -82,6 +91,11 @@ requestType('gossip', (nest, message, source) => {
   sendGossip(nest, message, source);
 });
 
+// sendGossip(bigOak, 'Kids with airgun in the park');
+// -> Cow Pasture received gossip 'Kids with airgun in the park' from Big Oak
+// -> Butcher Shop received gossip 'Kids with airgun in the park' from Big Oak
+
+// ---------------------------------------- Message routing ----------------------------------------
 requestType('connections', (nest, {name, neighbors}, source) => {
   let connections = nest.state.connections;
   if (JSON.stringify(connections.get(name)) == JSON.stringify(neighbors))
@@ -108,7 +122,6 @@ everywhere(nest => {
 
 function findRoute(from, to, connections) {
   let work = [{at: from, via: null}];
-  // console.log(work);
   for (let i = 0; i < work.length; i++) {
     let {at, via} = work[i];
     for (let next of connections.get(at) || []) {
@@ -122,15 +135,10 @@ function findRoute(from, to, connections) {
 }
 
 function routeRequest(nest, target, type, content) {
-  // console.log(nest.neighbors);
   if (nest.neighbors.includes(target)) {
-    // console.log('Here');
     return request(nest, target, type, content);
   } else {
-    // console.log('Here2');
     let via = findRoute(nest.name, target, nest.state.connections);
-    // console.log(via);
-    // console.log(nest.state.connections);
     if (!via) throw new Error(`No route to ${target}`);
     return request(nest, via, 'route', {target, type, content});
   }
@@ -140,16 +148,21 @@ requestType('route', (nest, {target, type, content}) => {
   return routeRequest(nest, target, type, content);
 });
 
-// routeRequest(bigOak, 'Cow Pasture', 'route', 'Hello');
+// routeRequest(bigOak, 'Church Tower', 'note', 'Incoming jackdaws!');
+// -> Error: No route to Church Tower
+// routeRequest(bigOak, 'Cow Pasture', 'note', 'Incoming jackdaws!');
+// -> Cow Pasture received note: Incoming jackdaws!
 
+// ---------------------------------------- Async functions ----------------------------------------
 requestType('storage', (nest, name) => storage(nest, name));
 
-function findInStorage(nest, name) {
-  return storage(nest, name).then(found => {
-    if (found != null) return found;
-    else return findInRemoteStorage(nest, name);
-  });
-}
+// version 1
+// function findInStorage(nest, name) {
+//   return storage(nest, name).then(found => {
+//     if (found != null) return found;
+//     else return findInRemoteStorage(nest, name);
+//   });
+// }
 
 function network(nest) {
   return Array.from(nest.state.connections.keys());
@@ -172,6 +185,27 @@ function findInRemoteStorage(nest, name) {
   return next();
 }
 
+// version 2
+async function findInStorage(nest, name) {
+  let local = await storage(nest, name);
+  if (local != null) return local;
+
+  let sources = network(nest).filter(n => n != nest.name);
+  while (sources.length > 0) {
+    let source = sources[Math.floor(Math.random() * sources.length)];
+    sources = sources.filter(n => n != source);
+    try {
+      let found = await routeRequest(nest, source, 'storage', name);
+      if (found != null) return found;
+    } catch (_) {}
+  }
+  throw new Error('Not found');
+}
+
+// findInStorage(bigOak, 'events on 2017-12-21').then(console.log);
+// -> Deep snow. Butcher's garbage can fell over. We chased off the ravens from Saint-Vulbas.
+
+// ---------------------------------------- Asynchronous bugs ----------------------------------------
 var Group = class Group {
   constructor() {
     this.members = [];
@@ -196,5 +230,5 @@ async function chicks(nest, year) {
   return list;
 }
 
-// console.log('End');
-// findInStorage(bigOak, 'events on 2017-12-21').then(console.log);
+// chicks(bigOak, 2017).then(console.log);
+// -> Big Oak: 1
