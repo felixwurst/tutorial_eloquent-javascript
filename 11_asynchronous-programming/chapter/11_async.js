@@ -54,10 +54,10 @@ function requestType(name, handler) {
   });
 }
 
-// ---------------------------------------- Collections of promises ----------------------------------------
 requestType('ping', () => 'pong');
 
-// ???
+// ---------------------------------------- Collections of promises ----------------------------------------
+
 function availableNeighbors(nest) {
   let requests = nest.neighbors.map(neighbor => {
     return request(nest, neighbor, 'ping').then(
@@ -66,9 +66,13 @@ function availableNeighbors(nest) {
     );
   });
   return Promise.all(requests).then(result => {
+    // result = [ true, true, true ]
+    // filters out the neighbours who are not reachable
     return nest.neighbors.filter((_, i) => result[i]);
   });
 }
+
+availableNeighbors(bigOak);
 
 // ---------------------------------------- Network flooding ----------------------------------------
 var everywhere = require('./crow-tech').everywhere;
