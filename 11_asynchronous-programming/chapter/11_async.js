@@ -121,17 +121,26 @@ function broadcastConnections(nest, name, exceptFor = null) {
 everywhere(nest => {
   nest.state.connections = new Map();
   nest.state.connections.set(nest.name, nest.neighbors);
+  // Map { 'Church Tower' => [ 'Sportsgrounds', 'Big Maple' ] }
+  // Map {'Sportsgrounds' => [ 'Church Tower', 'Big Maple', 'Tall Poplar' ] }
   broadcastConnections(nest, nest.name);
 });
 
 function findRoute(from, to, connections) {
+  console.log(connections);
   let work = [{at: from, via: null}];
   for (let i = 0; i < work.length; i++) {
+    // console.log(work);
     let {at, via} = work[i];
+    console.log('i:', i, 'at:', at, 'via:', via);
+    console.log(connections.get(at));
     for (let next of connections.get(at) || []) {
+      // console.log(next);
       if (next == to) return via;
       if (!work.some(w => w.at == next)) {
+        // console.log(next, via);
         work.push({at: next, via: via || next});
+        // console.log(work);
       }
     }
   }
@@ -152,7 +161,7 @@ requestType('route', (nest, {target, type, content}) => {
   return routeRequest(nest, target, type, content);
 });
 
-// routeRequest(bigOak, 'Church Tower', 'note', 'Incoming jackdaws!');
+routeRequest(bigOak, 'Church Tower', 'note', 'Incoming jackdaws!');
 // -> Error: No route to Church Tower
 // routeRequest(bigOak, 'Cow Pasture', 'note', 'Incoming jackdaws!');
 // -> Cow Pasture received note: Incoming jackdaws!
@@ -169,6 +178,7 @@ requestType('storage', (nest, name) => storage(nest, name));
 // }
 
 function network(nest) {
+  // console.log(nest.state.connections);
   return Array.from(nest.state.connections.keys());
 }
 
@@ -193,7 +203,6 @@ function findInRemoteStorage(nest, name) {
 async function findInStorage(nest, name) {
   let local = await storage(nest, name);
   if (local != null) return local;
-
   let sources = network(nest).filter(n => n != nest.name);
   while (sources.length > 0) {
     let source = sources[Math.floor(Math.random() * sources.length)];
@@ -224,6 +233,7 @@ function anyStorage(nest, source, name) {
   else return routeRequest(nest, source, 'storage', name);
 }
 
+// version 1
 async function chicks(nest, year) {
   let list = '';
   await Promise.all(
@@ -232,6 +242,16 @@ async function chicks(nest, year) {
     })
   );
   return list;
+}
+
+// version 2
+async function chicks(nest, year) {
+  // console.log(network(nest));
+  let lines = network(nest).map(async name => {
+    return name + ': ' + (await anyStorage(nest, name, `chicks in ${year}`));
+  });
+  // console.log(await Promise.all(lines));
+  return (await Promise.all(lines)).join('\n');
 }
 
 // chicks(bigOak, 2017).then(console.log);
