@@ -37,7 +37,7 @@ function request(nest, target, type, content) {
         else reject(new Timeout('Timed out'));
       }, 250);
     }
-    attempt(1);
+    attempt(0);
   });
 }
 
@@ -72,7 +72,8 @@ function availableNeighbors(nest) {
   });
 }
 
-availableNeighbors(bigOak);
+// availableNeighbors(bigOak).then(console.log);
+// -> [ 'Cow Pasture', 'Butcher Shop', "Gilles' Garden" ]
 
 // ---------------------------------------- Network flooding ----------------------------------------
 var everywhere = require('./crow-tech').everywhere;
@@ -98,6 +99,7 @@ requestType('gossip', (nest, message, source) => {
 // sendGossip(bigOak, 'Kids with airgun in the park');
 // -> Cow Pasture received gossip 'Kids with airgun in the park' from Big Oak
 // -> Butcher Shop received gossip 'Kids with airgun in the park' from Big Oak
+// ...
 
 // ---------------------------------------- Message routing ----------------------------------------
 requestType('connections', (nest, {name, neighbors}, source) => {
@@ -123,24 +125,18 @@ everywhere(nest => {
   nest.state.connections.set(nest.name, nest.neighbors);
   // Map { 'Church Tower' => [ 'Sportsgrounds', 'Big Maple' ] }
   // Map {'Sportsgrounds' => [ 'Church Tower', 'Big Maple', 'Tall Poplar' ] }
+  // ...
   broadcastConnections(nest, nest.name);
 });
 
 function findRoute(from, to, connections) {
-  console.log(connections);
   let work = [{at: from, via: null}];
   for (let i = 0; i < work.length; i++) {
-    // console.log(work);
     let {at, via} = work[i];
-    console.log('i:', i, 'at:', at, 'via:', via);
-    console.log(connections.get(at));
     for (let next of connections.get(at) || []) {
-      // console.log(next);
       if (next == to) return via;
       if (!work.some(w => w.at == next)) {
-        // console.log(next, via);
         work.push({at: next, via: via || next});
-        // console.log(work);
       }
     }
   }
@@ -161,10 +157,10 @@ requestType('route', (nest, {target, type, content}) => {
   return routeRequest(nest, target, type, content);
 });
 
-routeRequest(bigOak, 'Church Tower', 'note', 'Incoming jackdaws!');
-// -> Error: No route to Church Tower
-// routeRequest(bigOak, 'Cow Pasture', 'note', 'Incoming jackdaws!');
-// -> Cow Pasture received note: Incoming jackdaws!
+// setTimeout(() => {
+//   routeRequest(bigOak, 'Chateau', 'note', 'Incoming jackdaws!');
+// }, 1000);
+// -> Chateau received note: Incoming jackdaws!
 
 // ---------------------------------------- Async functions ----------------------------------------
 requestType('storage', (nest, name) => storage(nest, name));
@@ -178,7 +174,6 @@ requestType('storage', (nest, name) => storage(nest, name));
 // }
 
 function network(nest) {
-  // console.log(nest.state.connections);
   return Array.from(nest.state.connections.keys());
 }
 
@@ -234,15 +229,15 @@ function anyStorage(nest, source, name) {
 }
 
 // version 1
-async function chicks(nest, year) {
-  let list = '';
-  await Promise.all(
-    network(nest).map(async name => {
-      list += `${name}: ${await anyStorage(nest, name, `chicks in ${year}`)}\n`;
-    })
-  );
-  return list;
-}
+// async function chicks(nest, year) {
+//   let list = '';
+//   await Promise.all(
+//     network(nest).map(async name => {
+//       list += `${name}: ${await anyStorage(nest, name, `chicks in ${year}`)}\n`;
+//     })
+//   );
+//   return list;
+// }
 
 // version 2
 async function chicks(nest, year) {
@@ -254,5 +249,9 @@ async function chicks(nest, year) {
   return (await Promise.all(lines)).join('\n');
 }
 
-// chicks(bigOak, 2017).then(console.log);
+setTimeout(() => {
+  chicks(bigOak, 2017).then(console.log);
+}, 1000);
 // -> Big Oak: 1
+// -> Butcher Shop: 5
+// ...
