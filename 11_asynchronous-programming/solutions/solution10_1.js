@@ -12,13 +12,30 @@ Next, write the same function again without using async and await.
 Do request failures properly show up as rejections of the returned promise in both versions? How?
 */
 
+var bigOak = require('../chapter/crow-tech').bigOak;
+var network = require('../chapter/11_async').network;
+var anyStorage = require('../chapter/11_async').anyStorage;
+
 async function locateScalpel(nest) {
-  // Your code here.
+  // let lines = network(nest).map(async name => {
+  //   return name + ': ' + (await anyStorage(nest, name, `chicks in ${year}`));
+  // });
+  // let lines = network(nest).map(async name => {
+  //   return name + ': ' + (await anyStorage(nest, name, `scalpel`));
+  // });
+  // return (await Promise.all(lines)).join('\n');
+  let nextNest = await anyStorage(nest, nest.name, `scalpel`);
+  // while (nextNest != nest.name) {
+  //   await anyStorage(nest, nextNest, `scalpel`);
+  // }
+  return nextNest;
 }
 
 function locateScalpel2(nest) {
   // Your code here.
 }
 
-locateScalpel(bigOak).then(console.log);
+setTimeout(() => {
+  locateScalpel(bigOak).then(console.log);
+}, 1000);
 // → Butcher Shop
