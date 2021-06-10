@@ -75,18 +75,7 @@
       // reachable: {
       //   'Church Tower': [ 'Sportsgrounds', 'Big Maple' ],
       //   Sportsgrounds: [ 'Church Tower', 'Big Maple', 'Tall Poplar' ],
-      //   'Big Maple': [ 'Church Tower', 'Sportsgrounds', 'Woods', "Fabienne's Garden" ],
-      //   Woods: [ 'Big Maple', "Fabienne's Garden" ],
-      //   "Fabienne's Garden": [ 'Big Maple', 'Woods', 'Cow Pasture' ],
-      //   'Cow Pasture': [ "Fabienne's Garden", 'Big Oak' ],
-      //   'Big Oak': [ 'Cow Pasture', 'Butcher Shop', "Gilles' Garden" ],
-      //   'Butcher Shop': [ 'Big Oak', 'Tall Poplar', "Gilles' Garden", 'Chateau' ],
-      //   'Tall Poplar': [ 'Butcher Shop', 'Sportsgrounds', 'Chateau' ],
-      //   Chateau: [ 'Tall Poplar', 'Great Pine', 'Butcher Shop' ],
-      //   'Great Pine': [ 'Chateau', "Jacques' Farm", 'Hawthorn', "Gilles' Garden" ],
-      //   "Jacques' Farm": [ 'Great Pine', 'Hawthorn' ],
-      //   Hawthorn: [ "Jacques' Farm", 'Great Pine', "Gilles' Garden" ],
-      //   "Gilles' Garden": [ 'Hawthorn', 'Great Pine', 'Big Oak', 'Butcher Shop' ]
+      //   ...
       // }
       let reachable = Object.create(null);
       for (let [from, to] of connections.map(conn => conn.split('-'))) {
