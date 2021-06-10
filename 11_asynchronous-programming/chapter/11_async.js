@@ -173,9 +173,9 @@ requestType('storage', (nest, name) => storage(nest, name));
 //   });
 // }
 
-function network(nest) {
+exports.network = function network(nest) {
   return Array.from(nest.state.connections.keys());
-}
+};
 
 function findInRemoteStorage(nest, name) {
   let sources = network(nest).filter(n => n != nest.name);
@@ -223,12 +223,12 @@ var Group = class Group {
   }
 };
 
-function anyStorage(nest, source, name) {
+exports.anyStorage = function anyStorage(nest, source, name) {
   if (source == nest.name) return storage(nest, name);
   else return routeRequest(nest, source, 'storage', name);
-}
+};
 
-// version 1
+// version 1 -> outputs only the last value
 // async function chicks(nest, year) {
 //   let list = '';
 //   await Promise.all(
@@ -241,17 +241,15 @@ function anyStorage(nest, source, name) {
 
 // version 2
 async function chicks(nest, year) {
-  // console.log(network(nest));
   let lines = network(nest).map(async name => {
     return name + ': ' + (await anyStorage(nest, name, `chicks in ${year}`));
   });
-  // console.log(await Promise.all(lines));
   return (await Promise.all(lines)).join('\n');
 }
 
-setTimeout(() => {
-  chicks(bigOak, 2017).then(console.log);
-}, 1000);
+// setTimeout(() => {
+//   chicks(bigOak, 2017).then(console.log);
+// }, 1000);
 // -> Big Oak: 1
 // -> Butcher Shop: 5
 // ...
