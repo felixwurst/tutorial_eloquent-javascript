@@ -13,29 +13,46 @@ Do request failures properly show up as rejections of the returned promise in bo
 */
 
 var bigOak = require('../chapter/crow-tech').bigOak;
-var network = require('../chapter/11_async').network;
 var anyStorage = require('../chapter/11_async').anyStorage;
 
 async function locateScalpel(nest) {
-  // let lines = network(nest).map(async name => {
-  //   return name + ': ' + (await anyStorage(nest, name, `chicks in ${year}`));
-  // });
-  // let lines = network(nest).map(async name => {
-  //   return name + ': ' + (await anyStorage(nest, name, `scalpel`));
-  // });
-  // return (await Promise.all(lines)).join('\n');
-  let nextNest = await anyStorage(nest, nest.name, `scalpel`);
-  // while (nextNest != nest.name) {
-  //   await anyStorage(nest, nextNest, `scalpel`);
-  // }
-  return nextNest;
+  let oldLocation = nest.name;
+  let newLocation = await anyStorage(nest, nest.name, `scalpel`);
+  while (oldLocation !== newLocation) {
+    console.log(`from ${oldLocation} to ${newLocation}`);
+    oldLocation = newLocation;
+    newLocation = await anyStorage(nest, oldLocation, `scalpel`);
+  }
+  return newLocation;
+}
+
+// locateScalpel(bigOak).then(console.log);
+// -> Butcher Shop
+
+function loopFunction(nest, nestName) {
+  return new Promise((resolve, reject) => {
+    return anyStorage(nest, nestName, `scalpel`);
+  });
 }
 
 function locateScalpel2(nest) {
-  // Your code here.
+  console.log('Hello');
+  // let oldLocation = nest.name;
+  return new Promise((resolve, reject) => {
+    return loopFunction(nest, nest.name).then(newLocation => {
+      console.log(newLocation);
+      // if (nest.name == newLocation) {
+      //   console.log('same:', nest.name, newLocation);
+      // } else {
+      //   console.log('not same:', nest.name, newLocation);
+      //   loopFunction(nest, newLocation);
+      // }
+    });
+  });
 }
 
-setTimeout(() => {
-  locateScalpel(bigOak).then(console.log);
-}, 1000);
-// → Butcher Shop
+// locateScalpel2(bigOak).then(data => {
+//   console.log(data);
+// });
+locateScalpel2(bigOak);
+// -> Butcher Shop
