@@ -173,9 +173,9 @@ requestType('storage', (nest, name) => storage(nest, name));
 //   });
 // }
 
-exports.network = function network(nest) {
+function network(nest) {
   return Array.from(nest.state.connections.keys());
-};
+}
 
 function findInRemoteStorage(nest, name) {
   let sources = network(nest).filter(n => n != nest.name);
