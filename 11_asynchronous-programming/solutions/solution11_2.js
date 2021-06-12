@@ -10,22 +10,42 @@ Remember that after a promise has succeeded or failed, it can’t succeed or fai
 
 function Promise_all(promises) {
   return new Promise((resolve, reject) => {
-    // Your code here.
+    let results = [];
+    let pending = promises.length;
+    if (promises.length == 0) resolve(results);
+    for (let i = 0; i < promises.length; i++) {
+      promises[i]
+        .then(result => {
+          results[i] = result;
+          pending--;
+          if (pending == 0) resolve(results);
+        })
+        .catch(error => {
+          reject(error);
+        });
+    }
   });
 }
 
-// Test code.
+// Test code
+
+// empty array
 Promise_all([]).then(array => {
   console.log('This should be []:', array);
 });
+
+// order array
 function soon(val) {
   return new Promise(resolve => {
     setTimeout(() => resolve(val), Math.random() * 500);
   });
 }
+
 Promise_all([soon(1), soon(2), soon(3)]).then(array => {
   console.log('This should be [1, 2, 3]:', array);
 });
+
+// error handling
 Promise_all([soon(1), Promise.reject('X'), soon(3)])
   .then(array => {
     console.log('We should not get here');
@@ -33,5 +53,7 @@ Promise_all([soon(1), Promise.reject('X'), soon(3)])
   .catch(error => {
     if (error != 'X') {
       console.log('Unexpected failure:', error);
+    } else {
+      console.log('Expected failure X:', error);
     }
   });
