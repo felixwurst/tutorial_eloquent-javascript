@@ -16,43 +16,31 @@ var bigOak = require('../chapter/crow-tech').bigOak;
 var anyStorage = require('../chapter/11_async').anyStorage;
 
 async function locateScalpel(nest) {
-  let oldLocation = nest.name;
-  let newLocation = await anyStorage(nest, nest.name, `scalpel`);
-  while (oldLocation !== newLocation) {
-    console.log(`from ${oldLocation} to ${newLocation}`);
-    oldLocation = newLocation;
-    newLocation = await anyStorage(nest, oldLocation, `scalpel`);
+  let current = nest.name;
+  let next = await anyStorage(nest, current, `scalpel`);
+  while (current !== next) {
+    console.log(`from ${current} to ${next}`);
+    current = next;
+    next = await anyStorage(nest, current, `scalpel`);
   }
-  return newLocation;
+  return next;
 }
 
-// locateScalpel(bigOak).then(console.log);
+locateScalpel(bigOak).then(console.log);
 // -> Butcher Shop
 
-function loopFunction(nest, nestName) {
-  return new Promise((resolve, reject) => {
-    return anyStorage(nest, nestName, `scalpel`);
-  });
-}
-
 function locateScalpel2(nest) {
-  console.log('Hello');
-  // let oldLocation = nest.name;
-  return new Promise((resolve, reject) => {
-    return loopFunction(nest, nest.name).then(newLocation => {
-      console.log(newLocation);
-      // if (nest.name == newLocation) {
-      //   console.log('same:', nest.name, newLocation);
-      // } else {
-      //   console.log('not same:', nest.name, newLocation);
-      //   loopFunction(nest, newLocation);
-      // }
+  function loop(current) {
+    return anyStorage(nest, current, `scalpel`).then(next => {
+      if (current == next) return next;
+      else {
+        console.log(`from ${current} to ${next}`);
+        return loop(next);
+      }
     });
-  });
+  }
+  return loop(nest.name);
 }
 
-// locateScalpel2(bigOak).then(data => {
-//   console.log(data);
-// });
-locateScalpel2(bigOak);
+locateScalpel2(bigOak).then(console.log);
 // -> Butcher Shop
