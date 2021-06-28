@@ -1,10 +1,11 @@
 // load dependencies
-require("./code/load")("code/chapter/12_language.js");
+require('./code/load')('code/chapter/12_language.js');
 
 run(`
 do(define(plusOne, fun(a, +(a, 1))),
    print(plusOne(10)))
 `);
+// -> 11
 
 run(`
 do(define(pow, fun(base, exp,
@@ -13,3 +14,4 @@ do(define(pow, fun(base, exp,
         *(base, pow(base, -(exp, 1)))))),
    print(pow(2, 10)))
 `);
+// -> 1024
