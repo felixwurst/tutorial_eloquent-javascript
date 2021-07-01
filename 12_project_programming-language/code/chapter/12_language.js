@@ -13,10 +13,31 @@ function parseExpression(program) {
   return parseApply(expr, program.slice(match[0].length));
 }
 
+// origin version: only for removing white space
+// function skipSpace(string) {
+//   let first = string.search(/\S/);
+//   if (first == -1) return '';
+//   return string.slice(first);
+// }
+
+// my version: for removing white space & skipping comments
+// function skipSpace(string) {
+//   let hash = string.search(/#/);
+//   if (hash !== -1) {
+//     let commentEnd = string.search(/\n/);
+//     string = string.replace(string.slice(hash, commentEnd + 1), '');
+//   }
+//   let first = string.search(/\S/);
+//   if (first == -1) return '';
+//   return string.slice(first);
+// }
+
+// book version: for removing white space & skipping comments
 function skipSpace(string) {
-  let first = string.search(/\S/);
-  if (first == -1) return '';
-  return string.slice(first);
+  // returns a string that is to be at the beginning and is either white space or a hash sign followed by any characters that may not be a new line
+  let skippable = string.match(/^(\s|#.*)*/);
+  // the found string is removed from the beginning of the original string
+  return string.slice(skippable[0].length);
 }
 
 function parseApply(expr, program) {
@@ -155,6 +176,7 @@ specialForms.fun = (args, scope) => {
     for (let i = 0; i < arguments.length; i++) {
       localScope[params[i]] = arguments[i];
     }
+    console.log('body:', body, 'localScope:', localScope);
     return evaluate(body, localScope);
   };
 };
