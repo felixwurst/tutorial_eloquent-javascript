@@ -7,28 +7,23 @@ Add support for arrays to Egg by adding the following three functions to the top
 // load dependencies
 require('../code/load')('code/chapter/12_language.js');
 
-// Modify these definitions...
+// array(...values) to construct an array containing the argument values
+topScope.array = (...values) => values;
 
-topScope.array = '...';
+// length(array) to get an array’s length
+topScope.length = array => array.length;
 
-topScope.length = '...';
-
-topScope.element = '...';
-
-// run(`
-// do(define(sum, fun(array,
-//      do(define(i, 0),
-//         define(sum, 0),
-//         while(<(i, length(array)),
-//           do(define(sum, +(sum, element(array, i))),
-//              define(i, +(i, 1)))),
-//         sum))),
-//    print(sum(array(1, 2, 3))))
-// `);
-// → 6
+// element(array, n) to fetch the nth element from an array
+topScope.element = (array, n) => array[n];
 
 run(`
-do(define(plusOne, fun(a, +(a, 1))),
-   print(plusOne(10)))
+do(define(sum, fun(array,
+     do(define(i, 0),
+        define(sum, 0),
+        while(<(i, length(array)),
+          do(define(sum, +(sum, element(array, i))),
+             define(i, +(i, 1)))),
+        sum))),
+   print(sum(array(1, 2, 3))))
 `);
-// -> 11
+// → 6
