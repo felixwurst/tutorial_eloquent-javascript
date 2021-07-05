@@ -176,7 +176,7 @@ specialForms.fun = (args, scope) => {
     for (let i = 0; i < arguments.length; i++) {
       localScope[params[i]] = arguments[i];
     }
-    console.log('body:', body, 'localScope:', localScope);
+    // console.log('body:', body, 'localScope:', localScope);
     return evaluate(body, localScope);
   };
 };
