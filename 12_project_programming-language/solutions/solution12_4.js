@@ -13,36 +13,22 @@ The technique of representing scopes as simple objects, which has made things co
 // load dependencies
 require('../code/load')('code/chapter/12_language.js');
 
-// specialForms.define = (args, scope) => {
-//   if (args.length != 2 || args[0].type != 'word') {
-//     throw new SyntaxError('Incorrect use of define');
-//   }
-//   let value = evaluate(args[1], scope);
-//   scope[args[0].name] = value;
-//   return value;
-// };
+specialForms.set = (args, env) => {
+  if (args.length != 2 || args[0].type != 'word') {
+    throw new SyntaxError('Incorrect use of set');
+  }
+  // e.g. x
+  let varName = args[0].name;
+  // e.g. 50
+  let value = evaluate(args[1], env);
 
-specialForms.set = (args, scope) => {
-  // outer scope: { x: 4, setx: [Function] }
-  // inner scope: { val: 50 }
-  if (Object.prototype.hasOwnProperty.call(scope, args[0].name)) {
-    // overwrite x
-    console.log('arg in scope');
-    // x
-    console.log(args[0]);
-    // val
-    console.log(args[1]);
-    // let value = evaluate(args[1], scope);
-    // console.log(value);
-    // scope[args[0].name] = value;
-    // return value;
+  for (let scope = env; scope; scope = Object.getPrototypeOf(scope)) {
+    if (Object.prototype.hasOwnProperty.call(scope, varName)) {
+      scope[varName] = value;
+      return value;
+    }
   }
-  if (Object.getPrototypeOf(scope) == null) {
-    console.log('error');
-  } else {
-    console.log('recursive');
-    specialForms.set(args, Object.getPrototypeOf(scope));
-  }
+  throw new ReferenceError(`Setting undefined variable ${varName}`);
 };
 
 run(`
@@ -52,5 +38,5 @@ do(define(x, 4),
    print(x))
 `);
 // → 50
-// run(`set(quux, true)`);
+run(`set(quux, true)`);
 // → Some kind of ReferenceError
