@@ -16,7 +16,18 @@
 
     <script>
       function byTagName(node, tagName) {
-        // Your code here.
+        let foundTags = [];
+        function collectTags(node) {
+          node.childNodes.forEach(child => {
+            if (child.nodeType == document.ELEMENT_NODE) {
+              if (child.nodeName.toLowerCase() == tagName)
+                foundTags.push(child);
+              collectTags(child);
+            }
+          });
+        }
+        collectTags(node);
+        return foundTags;
       }
 
       console.log(byTagName(document.body, 'h1').length);
