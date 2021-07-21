@@ -30,10 +30,29 @@
       function animate(time) {
         if (lastTime != null) angle += (time - lastTime) * 0.001;
         lastTime = time;
-        cat.style.top = Math.sin(angle) * 40 + 40 + 'px';
-        cat.style.left = Math.cos(angle) * 200 + 230 + 'px';
 
-        // Your extensions here.
+        let catPos = {
+          top: Math.sin(angle) * 50 + 100,
+          left: Math.cos(angle) * 200 + 275,
+        };
+        cat.style.top = catPos.top + 'px';
+        cat.style.left = catPos.left + 'px';
+
+        // the cat and his hat orbit at opposite sides of the ellipse
+        let hatPos1 = {
+          top: Math.sin(angle + Math.PI) * 50 + 60,
+          left: Math.cos(angle + Math.PI) * 200 + 237,
+        };
+        // hat.style.top = hatPos1.top + 'px';
+        // hat.style.left = hatPos1.left + 'px';
+
+        // the hat circles counterclockwise around the cat
+        let hatPos2 = {
+          top: Math.sin(-angle) * 75,
+          left: Math.cos(-angle) * 75 + 10,
+        };
+        hat.style.top = catPos.top + hatPos2.top + 'px';
+        hat.style.left = catPos.left + hatPos2.left + 'px';
 
         requestAnimationFrame(animate);
       }
