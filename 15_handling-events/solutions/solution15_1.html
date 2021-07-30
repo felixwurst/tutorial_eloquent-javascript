@@ -18,7 +18,23 @@
     <p>🎈</p>
 
     <script>
-      // Your code here
+      let p = document.querySelector('p');
+      p.style.fontSize = '10px';
+
+      window.addEventListener('keydown', inflate);
+
+      function inflate(event) {
+        let pLength = Number(
+          p.style.fontSize.substr(0, p.style.fontSize.length - 2)
+        );
+        if (pLength > 100) {
+          p.innerText = '💥';
+          window.removeEventListener('keydown', inflate);
+        }
+        if (event.key == 'ArrowDown' && pLength >= 11)
+          p.style.fontSize = pLength * 0.9 + 'px';
+        if (event.key == 'ArrowUp') p.style.fontSize = pLength * 1.1 + 'px';
+      }
     </script>
   </body>
 </html>
