@@ -16,21 +16,35 @@
     There are various possible approaches here. You can make your solution as simple or as complex as you want. A simple solution to start with is to keep a fixed number of trail elements and cycle through them, moving the next one to the mouse’s current position every time a "mousemove" event occurs. -->
 
     <style>
+      body {
+        height: 300px;
+      }
       .trail {
-        /* className for the trail elements */
         position: absolute;
         height: 6px;
         width: 6px;
         border-radius: 3px;
         background: teal;
       }
-      body {
-        height: 300px;
-      }
     </style>
-
     <script>
-      // Your code here.
+      // creates a number of dots
+      let dots = [];
+      for (let i = 0; i < 12; i++) {
+        let dot = document.createElement('div');
+        dot.className = 'trail';
+        document.body.appendChild(dot);
+        dots.push(dot);
+      }
+
+      // moves the current dot to the cursor
+      let currentDot = 0;
+      window.addEventListener('mousemove', event => {
+        let dot = dots[currentDot];
+        dot.style.left = event.pageX - 3 + 'px';
+        dot.style.top = event.pageY - 3 + 'px';
+        currentDot = (currentDot + 1) % dots.length;
+      });
     </script>
   </body>
 </html>
