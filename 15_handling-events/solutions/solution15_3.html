@@ -20,7 +20,26 @@
     </tab-panel>
     <script>
       function asTabs(node) {
-        // Your code here.
+        let tabs = Array.from(node.children).map(node => {
+          let button = document.createElement('button');
+          button.textContent = node.getAttribute('data-tabname');
+          let tab = {node, button};
+          button.addEventListener('click', () => selectTab(tab));
+          return tab;
+        });
+
+        let tabList = document.createElement('div');
+        for (const {button} of tabs) tabList.appendChild(button);
+        node.insertBefore(tabList, node.firstChild);
+
+        function selectTab(selectedTab) {
+          for (const tab of tabs) {
+            let selected = selectedTab == tab;
+            tab.node.style.display = selected ? 'block' : 'none';
+            tab.button.style.color = selected ? 'red' : 'black';
+          }
+        }
+        selectTab(tabs[0]);
       }
       asTabs(document.querySelector('tab-panel'));
     </script>
