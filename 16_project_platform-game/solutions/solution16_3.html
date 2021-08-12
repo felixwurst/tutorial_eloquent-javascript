@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>A Monster</title>
+  </head>
+  <script src="code/chapter/16_game.js"></script>
+  <script src="code/levels.js"></script>
+
+  <link rel="stylesheet" href="css/game.css" />
+  <style>
+    .monster {
+      background: purple;
+    }
+  </style>
+
+  <body>
+    <script>
+      // Complete the constructor, update, and collide methods
+      class Monster {
+        constructor(pos /* ... */) {}
+
+        get type() {
+          return 'monster';
+        }
+
+        static create(pos) {
+          return new Monster(pos.plus(new Vec(0, -1)));
+        }
+
+        update(time, state) {}
+
+        collide(state) {}
+      }
+
+      Monster.prototype.size = new Vec(1.2, 2);
+
+      levelChars['M'] = Monster;
+
+      runLevel(
+        new Level(`
+..................................
+.################################.
+.#..............................#.
+.#..............................#.
+.#..............................#.
+.#...........................o..#.
+.#..@...........................#.
+.##########..............########.
+..........#..o..o..o..o..#........
+..........#...........M..#........
+..........################........
+..................................
+`),
+        DOMDisplay
+      );
+    </script>
+  </body>
+</html>
