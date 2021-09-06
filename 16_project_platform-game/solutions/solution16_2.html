@@ -6,10 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Pausing The Game</title>
   </head>
-  <script src="code/chapter/16_game.js"></script>
-  <script src="code/levels.js"></script>
+  <script src="../code/chapter/16_game.js"></script>
+  <script src="../code/levels.js"></script>
 
-  <link rel="stylesheet" href="css/game.css" />
+  <link rel="stylesheet" href="../css/game.css" />
 
   <body>
     <!-- Make it possible to pause (suspend) and unpause the game by pressing the Esc key.
@@ -21,16 +21,30 @@
     When you have that working, there is something else you could try. The way we have been registering keyboard event handlers is somewhat problematic. The arrowKeys object is currently a global binding, and its event handlers are kept around even when no game is running. You could say they leak out of our system. Extend trackKeys to provide a way to unregister its handlers and then change runLevel to register its handlers when it starts and unregister them again when it is finished. -->
 
     <script>
-      // The old runLevel function. Modify this...
+      var arrowKeys = trackKeys([
+        'ArrowLeft',
+        'ArrowRight',
+        'ArrowUp',
+        'Escape',
+      ]);
+
       function runLevel(level, Display) {
         let display = new Display(document.body, level);
         let state = State.start(level);
         let ending = 1;
+
+        if (arrowKeys.Escape) {
+          console.log('No');
+        }
         return new Promise(resolve => {
           runAnimation(time => {
             state = state.update(time, arrowKeys);
             display.syncState(state);
-            if (state.status == 'playing') {
+
+            if (arrowKeys.Escape) {
+              console.log('Yes');
+              // return false;
+            } else if (state.status == 'playing') {
               return true;
             } else if (ending > 0) {
               ending -= time;
