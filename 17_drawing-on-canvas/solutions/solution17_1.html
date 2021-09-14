@@ -6,9 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Shapes</title>
   </head>
-  <script src="code/chapter/16_game.js"></script>
-  <script src="code/levels.js"></script>
-  <script src="code/chapter/17_canvas.js"></script>
+  <script src="../code/chapter/16_game.js"></script>
+  <script src="../code/levels.js"></script>
+  <script src="../code/chapter/17_canvas.js"></script>
 
   <body>
     <!-- Write a program that draws the following shapes on a canvas:
@@ -31,7 +31,20 @@
     <script>
       let cx = document.querySelector('canvas').getContext('2d');
 
-      // Your code here.
+      function trapezoid(widthTop, widthBottom, height) {
+        cx.beginPath();
+        cx.moveTo((widthBottom - widthTop) / 2, 0);
+        cx.lineTo((widthBottom - widthTop) / 2 + widthTop, 0);
+        cx.lineTo(widthBottom, height);
+        cx.lineTo(0, height);
+        cx.closePath();
+        cx.stroke();
+      }
+      trapezoid(50, 100, 50);
+
+      cx.fillStyle = 'red';
+      cx.rotate((2 * Math.PI) / 8);
+      cx.fillRect(120, 0, 50, 50);
     </script>
   </body>
 </html>
