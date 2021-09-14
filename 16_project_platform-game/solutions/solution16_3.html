@@ -48,11 +48,18 @@
         }
 
         collide(state) {
-          return new State(state.level, state.actors, 'lost');
+          let player = state.player;
+          // If the player's lower edge intersects with the upper quarter of the monster, the monster disappears.
+          if (player.pos.y + player.size.y < this.pos.y + 0.5) {
+            let filtered = state.actors.filter(a => a != this);
+            return new State(state.level, filtered, state.status);
+          } else {
+            return new State(state.level, state.actors, 'lost');
+          }
         }
       }
 
-      Monster.prototype.size = new Vec(1.2, 2);
+      Monster.prototype.size = new Vec(1.2, 0.5);
 
       levelChars['M'] = Monster;
 
@@ -67,7 +74,7 @@
 .#..@...........................#.
 .##########..............########.
 ..........#..o..o..o..o..#........
-..........#...........M..#........
+..........#..M...M...M...#........
 ..........################........
 ..................................
 `),
