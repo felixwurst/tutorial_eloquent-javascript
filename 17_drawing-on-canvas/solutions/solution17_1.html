@@ -27,91 +27,79 @@
 
     I recommend creating a function for each shape. Pass the position, and optionally other properties such as the size or the number of points, as parameters. The alternative, which is to hard-code numbers all over your code, tends to make the code needlessly hard to read and modify. -->
 
-    <canvas width="1500" height="300"></canvas>
+    <canvas width="1400" height="300"></canvas>
     <script>
       let cx = document.querySelector('canvas').getContext('2d');
 
-      function trapezoid(posX, posY, widthTop, widthBottom, height) {
-        cx.save();
-        cx.translate(posX, posY);
+      function trapezoid(x, y, widthTop, widthBottom, height) {
         cx.beginPath();
-        cx.moveTo((widthBottom - widthTop) / 2, 0);
-        cx.lineTo((widthBottom - widthTop) / 2 + widthTop, 0);
-        cx.lineTo(widthBottom, height);
-        cx.lineTo(0, height);
+        cx.moveTo((widthBottom - widthTop) / 2 + x, y);
+        cx.lineTo((widthBottom - widthTop) / 2 + widthTop + x, y);
+        cx.lineTo(widthBottom + x, height + y);
+        cx.lineTo(x, height + y);
         cx.closePath();
         cx.stroke();
-        cx.restore();
       }
-      trapezoid(0, 0, 100, 200, 100);
+      trapezoid(20, 20, 100, 200, 100);
 
-      function redDiamond(posX, posY, length) {
-        cx.save();
-        cx.fillStyle = 'red';
+      function redDiamond(x, y, length) {
         let offset = Math.sqrt(Math.pow(length, 2) / 2);
-        cx.translate(posX + offset, posY);
+        cx.translate(x + offset, y);
         cx.rotate(Math.PI / 4);
+        cx.fillStyle = 'red';
         cx.fillRect(0, 0, length, length);
-        cx.restore();
+        cx.resetTransform();
       }
-      redDiamond(250, 0, 100);
+      redDiamond(300, 20, 100);
 
-      function zigzagLine(posX, posY, width, height) {
-        cx.save();
-        cx.translate(posX, posY);
+      function zigzagLine(x, y, width, height, number) {
         cx.beginPath();
-        cx.moveTo(0, 0);
-        for (let y = 0; y < height; y += height / 6) {
-          cx.lineTo(width, height / 12 + y);
-          cx.lineTo(0, height / 6 + y);
+        cx.moveTo(x, y);
+        for (let i = 0; i < height; i += height / number) {
+          cx.lineTo(x + width, y + i + height / number / 2);
+          cx.lineTo(x, y + i + height / number);
         }
         cx.stroke();
-        cx.restore();
       }
-      zigzagLine(450, 0, 200, 200);
+      zigzagLine(520, 20, 200, 200, 8);
 
-      function spiral(posX, posY, length) {
-        cx.save();
-        cx.translate(posX + length / 2, posY + length / 2);
+      function spiral(x, y, radius) {
+        let xCenter = x + radius,
+          yCenter = y + radius;
         cx.beginPath();
-        cx.moveTo(0, 0);
+        cx.moveTo(xCenter, yCenter);
         for (let i = 0; i < 100; i++) {
-          cx.lineTo(i, 0);
-          cx.rotate(0.2);
-        }
-        cx.stroke();
-        cx.restore();
-      }
-      spiral(700, 0, 200);
-
-      function star(posX, posY, length) {
-        cx.save();
-        cx.translate(posX + length / 2, posY + length / 2);
-        cx.beginPath();
-        // cx.arc(0, 0, 100, 0, 2 * Math.PI);
-        console.log(Math.cos((2 * Math.PI) / 8) * 100);
-        console.log(Math.sin((2 * Math.PI) / 8) * 100);
-        // cx.quadraticCurveTo(
-        //   0,
-        //   0,
-        //   Math.cos(((2 * Math.PI) / 8) * 1) * 100,
-        //   Math.sin(((2 * Math.PI) / 8) * 1) * 100
-        // );
-        for (let i = 0; i < 8; i++) {
-          cx.quadraticCurveTo(
-            0,
-            0,
-            Math.cos(((2 * Math.PI) / 8) * i) * 100,
-            Math.sin(((2 * Math.PI) / 8) * i) * 100
+          // a circle is divided into 20 segments
+          let angle = (2 * Math.PI * i) / 20;
+          // the current location moves further away from the centre towards the value of the radius
+          let dist = (radius * i) / 100;
+          cx.lineTo(
+            xCenter + Math.cos(angle) * dist,
+            yCenter + Math.sin(angle) * dist
           );
-          // cx.moveTo(0, 0);
-          // cx.rotate((2 * Math.PI) / 8);
-          // cx.lineTo(100, 0);
         }
         cx.stroke();
-        cx.restore();
       }
-      star(950, 0, 200);
+      spiral(770, 20, 100);
+
+      function star(x, y, radius, number) {
+        let xCenter = x + radius,
+          yCenter = y + radius;
+        cx.beginPath();
+        cx.moveTo(xCenter + radius, yCenter);
+        for (let i = 1; i <= number; i++) {
+          let angle = (2 * Math.PI * i) / number;
+          cx.quadraticCurveTo(
+            xCenter,
+            yCenter,
+            xCenter + Math.cos(angle) * radius,
+            yCenter + Math.sin(angle) * radius
+          );
+        }
+        cx.fillStyle = 'gold';
+        cx.fill();
+      }
+      star(1020, 20, 100, 12);
     </script>
   </body>
 </html>
