@@ -6,9 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>A Bouncing Ball</title>
   </head>
-  <script src="code/chapter/16_game.js"></script>
-  <script src="code/levels.js"></script>
-  <script src="code/chapter/17_canvas.js"></script>
+  <script src="../code/chapter/16_game.js"></script>
+  <script src="../code/levels.js"></script>
+  <script src="../code/chapter/17_canvas.js"></script>
 
   <body>
     <!-- Use the requestAnimationFrame technique that we saw in Chapter 14 and Chapter 16 to draw a box with a bouncing ball in it. The ball moves at a constant speed and bounces off the box’s sides when it hits them. -->
@@ -27,8 +27,30 @@
       }
       requestAnimationFrame(frame);
 
+      let x = 200,
+        y = 200;
+      let radius = 10;
+      let speedX = 200,
+        speedY = 100;
+
       function updateAnimation(step) {
-        // Your code here.
+        // draw rectangle as boundary
+        cx.clearRect(0, 0, 400, 400);
+        cx.strokeStyle = 'blue';
+        cx.lineWidth = 4;
+        cx.strokeRect(25, 25, 350, 350);
+
+        // ball changes direction when it hits boundary
+        x += step * speedX;
+        y += step * speedY;
+        if (x < 25 + radius || x > 375 - radius) speedX = -speedX;
+        if (y < 25 + radius || y > 375 - radius) speedY = -speedY;
+
+        // draw red ball
+        cx.fillStyle = 'red';
+        cx.beginPath();
+        cx.arc(x, y, radius, 0, 2 * Math.PI);
+        cx.fill();
       }
     </script>
   </body>
