@@ -17,6 +17,84 @@
     
     Think of a way to allow us to draw an inverted character without loading additional image files and without having to make transformed drawImage calls every frame. -->
 
-    <script></script>
+    <script>
+      var playerSprites = document.createElement('img');
+      playerSprites.src = 'img/player.png';
+      var playerXOverlap = 4;
+
+      var extraCanvas = document.createElement('canvas');
+      var extraCx = extraCanvas.getContext('2d');
+
+      // Another canvas element is created, rotated and the sprites of the player are drawn on it once only.
+      playerSprites.addEventListener('load', function (event) {
+        var width = playerSprites.width;
+        var height = playerSprites.height;
+        extraCx.scale(-1, 1);
+        extraCx.translate(-width, 0);
+        extraCx.drawImage(
+          playerSprites,
+          0,
+          0,
+          width,
+          height,
+          0,
+          0,
+          width,
+          height
+        );
+      });
+
+      CanvasDisplay.prototype.drawPlayer = function (
+        player,
+        x,
+        y,
+        width,
+        height
+      ) {
+        width += playerXOverlap * 2;
+        x -= playerXOverlap;
+        if (player.speed.x != 0) {
+          this.flipPlayer = player.speed.x < 0;
+        }
+
+        let tile = 8;
+        if (player.speed.y != 0) {
+          tile = 9;
+        } else if (player.speed.x != 0) {
+          tile = Math.floor(Date.now() / 60) % 8;
+        }
+
+        this.cx.save();
+        // In drawImage we can use the additionally created canvas element as a source image. When drawing, the already inverted sprites are copied to the main canvas.
+        if (this.flipPlayer) {
+          this.cx.drawImage(
+            extraCanvas,
+            (9 - tile) * width,
+            0,
+            width,
+            height,
+            x,
+            y,
+            width,
+            height
+          );
+        } else {
+          this.cx.drawImage(
+            playerSprites,
+            tile * width,
+            0,
+            width,
+            height,
+            x,
+            y,
+            width,
+            height
+          );
+        }
+        this.cx.restore();
+      };
+
+      runGame(GAME_LEVELS, CanvasDisplay);
+    </script>
   </body>
 </html>
