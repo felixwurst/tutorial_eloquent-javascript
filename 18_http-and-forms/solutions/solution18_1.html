@@ -17,7 +17,23 @@
     Finally, try asking for the media type application/rainbows+unicorns and see which status code that produces. -->
 
     <script>
-      // Your code here.
+      const url = 'https://eloquentjavascript.net/author';
+      const types = [
+        'text/plain',
+        'text/html',
+        'application/json',
+        'application/rainbows+unicorns',
+      ];
+
+      async function showTypes() {
+        for (const type of types) {
+          let resp = await fetch(url, {
+            headers: {Accept: type},
+          });
+          console.log(`${type}:\n${await resp.text()}`);
+        }
+      }
+      showTypes();
     </script>
   </body>
 </html>
