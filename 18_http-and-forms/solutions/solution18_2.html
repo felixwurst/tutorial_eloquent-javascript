@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>A JavaScript Workbench</title>
   </head>
-  <script src="code/chapter/18_http.js"></script>
+  <script src="../code/chapter/18_http.js"></script>
 
   <body>
     <!-- Build an interface that allows people to type and run pieces of JavaScript code.
@@ -18,7 +18,16 @@
     <pre id="output"></pre>
 
     <script>
-      // Your code here.
+      document.getElementById('button').addEventListener('click', () => {
+        let code = document.getElementById('code').value;
+        let outputNode = document.getElementById('output');
+        try {
+          let result = Function(code)();
+          outputNode.appendChild(document.createTextNode(`${result}\n`));
+        } catch (error) {
+          outputNode.appendChild(document.createTextNode(`Error: ${error}\n`));
+        }
+      });
     </script>
   </body>
 </html>
