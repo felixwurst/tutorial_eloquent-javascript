@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Conway's Game Of Life</title>
   </head>
-  <script src="code/chapter/18_http.js"></script>
+  <script src="../code/chapter/18_http.js"></script>
 
   <body>
     <!-- Conway’s Game of Life is a simple simulation that creates artificial “life” on a grid, each cell of which is either alive or not. Each generation (turn), the following rules are applied:
@@ -27,7 +27,25 @@
     <button id="next">Next generation</button>
 
     <script>
-      // Your code here.
+      let grid = document.getElementById('grid');
+      let width = 30;
+      let height = 15;
+      for (let y = 0; y < height; y++) {
+        for (let x = 0; x < width; x++) {
+          let checkbox = document.createElement('input');
+          checkbox.type = 'checkbox';
+          if (Math.floor(Math.random() * 10) > 4) {
+            checkbox.checked = true;
+          } else {
+            checkbox.checked = false;
+          }
+          grid.appendChild(checkbox);
+        }
+        grid.appendChild(document.createElement('br'));
+      }
+      document.getElementById('next').addEventListener('click', () => {
+        console.log('Hello');
+      });
     </script>
   </body>
 </html>
