@@ -27,24 +27,41 @@
     <button id="next">Next generation</button>
 
     <script>
-      let grid = document.getElementById('grid');
-      let width = 30;
-      let height = 15;
+      const width = 30,
+        height = 15;
+      let gridNode = document.getElementById('grid');
+      let checkboxes = [];
       for (let y = 0; y < height; y++) {
         for (let x = 0; x < width; x++) {
           let checkbox = document.createElement('input');
           checkbox.type = 'checkbox';
-          if (Math.floor(Math.random() * 10) > 4) {
-            checkbox.checked = true;
-          } else {
-            checkbox.checked = false;
-          }
-          grid.appendChild(checkbox);
+          checkboxes.push(checkbox);
+          gridNode.appendChild(checkbox);
         }
-        grid.appendChild(document.createElement('br'));
+        gridNode.appendChild(document.createElement('br'));
       }
+
+      function randomGrid() {
+        result = [];
+        for (let i = 0; i < width * height; i++) {
+          result.push(Math.floor(Math.random() * 10) > 4);
+        }
+        return result;
+      }
+      function checkboxesFromGrid(grid) {
+        grid.forEach((value, i) => {
+          checkboxes[i].checked = value;
+        });
+      }
+
+      checkboxesFromGrid(randomGrid());
+
+      function gridFromCheckboxes() {}
+      function countNeighbors() {}
+      function nextGeneration() {}
+
       document.getElementById('next').addEventListener('click', () => {
-        console.log('Hello');
+        checkboxesFromGrid(randomGrid());
       });
     </script>
   </body>
