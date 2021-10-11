@@ -25,12 +25,13 @@
 
     <div id="grid"></div>
     <button id="next">Next generation</button>
+    <button id="run">Auto run</button>
 
     <script>
+      // A grid of checkboxes is created
       const width = 30,
-        height = 15;
+        height = 30;
       let gridNode = document.getElementById('grid');
-
       let checkboxes = [];
       for (let y = 0; y < height; y++) {
         for (let x = 0; x < width; x++) {
@@ -42,6 +43,7 @@
         gridNode.appendChild(document.createElement('br'));
       }
 
+      // A grid is an array of boolean values. Checkboxes are the elements in the document. These two functions can convert from one format to the other.
       function checkboxesFromGrid(grid) {
         grid.forEach((value, i) => {
           checkboxes[i].checked = value;
@@ -51,6 +53,7 @@
         return checkboxes.map(box => box.checked);
       }
 
+      // An array of random boolean values is created
       function randomGrid() {
         result = [];
         for (let i = 0; i < width * height; i++) {
@@ -61,6 +64,7 @@
 
       checkboxesFromGrid(randomGrid());
 
+      // The living cells that are directly adjacent to the examined cell are counted. Diagonally adjacent cells also count. A cell can therefore have a maximum of eight neighbours.
       function countNeighbours(grid, x, y) {
         let count = 0;
         for (
@@ -80,6 +84,7 @@
         }
         return count;
       }
+      // With the information of the number of living neighbours, it is determined according to the rules of the system whether the cell will live on in the next generation or not.
       function nextGeneration(grid) {
         let newGrid = new Array(width * height);
         for (let y = 0; y < height; y++) {
@@ -98,8 +103,20 @@
         return newGrid;
       }
 
-      document.getElementById('next').addEventListener('click', () => {
+      function turn() {
         checkboxesFromGrid(nextGeneration(gridFromCheckboxes()));
+      }
+      // Pressing the next button jumps to the next generation
+      document.getElementById('next').addEventListener('click', turn);
+      // Pressing the run button starts an animation that automatically shows the next generations
+      let running = null;
+      document.getElementById('run').addEventListener('click', () => {
+        if (running) {
+          clearInterval(running);
+          running = null;
+        } else {
+          running = setInterval(turn, 500);
+        }
       });
     </script>
   </body>
