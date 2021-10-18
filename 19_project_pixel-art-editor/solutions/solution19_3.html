@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Circles</title>
+  </head>
+  <script src="../code/chapter/19_paint.js"></script>
+
+  <body>
+    <div></div>
+    <script>
+      function circle(pos, state, dispatch) {
+        // Your code here
+      }
+
+      let dom = startPixelEditor({
+        tools: Object.assign({}, baseTools, {circle}),
+      });
+      document.querySelector('div').appendChild(dom);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Keyboard Bindings</title>
+  </head>
+  <script src="../code/chapter/19_paint.js"></script>
+
+  <body>
+    <div></div>
+    <script>
+      // The original PixelEditor class. Extend the constructor.
+      class PixelEditor {
+        constructor(state, config) {
+          let {tools, controls, dispatch} = config;
+          this.state = state;
+
+          this.canvas = new PictureCanvas(state.picture, pos => {
+            let tool = tools[this.state.tool];
+            let onMove = tool(pos, this.state, dispatch);
+            if (onMove) {
+              return pos => onMove(pos, this.state, dispatch);
+            }
+          });
+          this.controls = controls.map(Control => new Control(state, config));
+          this.dom = elt(
+            'div',
+            {},
+            this.canvas.dom,
+            elt('br'),
+            ...this.controls.reduce((a, c) => a.concat(' ', c.dom), [])
+          );
+        }
+        syncState(state) {
+          this.state = state;
+          this.canvas.syncState(state.picture);
+          for (let ctrl of this.controls) ctrl.syncState(state);
+        }
+      }
+
+      document.querySelector('div').appendChild(startPixelEditor({}));
+    </script>
+  </body>
+</html>

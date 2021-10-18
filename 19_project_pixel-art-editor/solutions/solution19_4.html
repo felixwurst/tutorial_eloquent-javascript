@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Proper Lines</title>
+  </head>
+  <script src="../code/chapter/19_paint.js"></script>
+
+  <body>
+    <div></div>
+    <script>
+      // The old draw tool. Rewrite this.
+      function draw(pos, state, dispatch) {
+        function drawPixel({x, y}, state) {
+          let drawn = {x, y, color: state.color};
+          dispatch({picture: state.picture.draw([drawn])});
+        }
+        drawPixel(pos, state);
+        return drawPixel;
+      }
+
+      function line(pos, state, dispatch) {
+        // Your code here
+      }
+
+      let dom = startPixelEditor({
+        tools: {draw, line, fill, rectangle, pick},
+      });
+      document.querySelector('div').appendChild(dom);
+    </script>
+  </body>
+</html>
