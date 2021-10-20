@@ -12,6 +12,7 @@ var Picture = class Picture {
     return this.pixels[x + y * this.width];
   }
   draw(pixels) {
+    // slice without parameter is used to get a copy of the array
     let copy = this.pixels.slice();
     for (let {x, y, color} of pixels) {
       copy[x + y * this.width] = color;
@@ -21,6 +22,7 @@ var Picture = class Picture {
 };
 
 function updateState(state, action) {
+  // state and action are copied into a new object
   return Object.assign({}, state, action);
 }
 
