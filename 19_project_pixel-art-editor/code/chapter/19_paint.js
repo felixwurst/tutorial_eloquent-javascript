@@ -1,3 +1,5 @@
+/* ************************************************* The State ************************************************* */
+
 var Picture = class Picture {
   constructor(width, height, pixels) {
     this.width = width;
@@ -26,6 +28,8 @@ function updateState(state, action) {
   return Object.assign({}, state, action);
 }
 
+/* ************************************************* DOM Building ************************************************* */
+
 function elt(type, props, ...children) {
   let dom = document.createElement(type);
   if (props) Object.assign(dom, props);
@@ -35,6 +39,10 @@ function elt(type, props, ...children) {
   }
   return dom;
 }
+
+/* ************************************************* The Canvas ************************************************* */
+
+// This component is responsible for displaying an image and transmitting pointer events on this image to the rest of the application.
 
 var scale = 10;
 
@@ -67,11 +75,13 @@ function drawPicture(picture, canvas, scale) {
 }
 
 PictureCanvas.prototype.mouse = function (downEvent, onDown) {
+  // a key other than the left one is pressed
   if (downEvent.button != 0) return;
   let pos = pointerPosition(downEvent, this.dom);
   let onMove = onDown(pos);
   if (!onMove) return;
   let move = moveEvent => {
+    // no more buttons are pressed
     if (moveEvent.buttons == 0) {
       this.dom.removeEventListener('mousemove', move);
     } else {
@@ -85,6 +95,7 @@ PictureCanvas.prototype.mouse = function (downEvent, onDown) {
 };
 
 function pointerPosition(pos, domNode) {
+  // position of the canvas on the screen
   let rect = domNode.getBoundingClientRect();
   return {
     x: Math.floor((pos.clientX - rect.left) / scale),
@@ -95,6 +106,7 @@ function pointerPosition(pos, domNode) {
 PictureCanvas.prototype.touch = function (startEvent, onDown) {
   let pos = pointerPosition(startEvent.touches[0], this.dom);
   let onMove = onDown(pos);
+  // prevents the image from being rotated
   startEvent.preventDefault();
   if (!onMove) return;
   let move = moveEvent => {
@@ -110,6 +122,8 @@ PictureCanvas.prototype.touch = function (startEvent, onDown) {
   this.dom.addEventListener('touchmove', move);
   this.dom.addEventListener('touchend', end);
 };
+
+/* ************************************************* The Application ************************************************* */
 
 var PixelEditor = class PixelEditor {
   constructor(state, config) {
@@ -175,6 +189,8 @@ var ColorSelect = class ColorSelect {
   }
 };
 
+/* ************************************************* Drawing tools ************************************************* */
+
 function draw(pos, state, dispatch) {
   function drawPixel({x, y}, state) {
     let drawn = {x, y, color: state.color};
@@ -234,6 +250,8 @@ function fill({x, y}, state, dispatch) {
 function pick(pos, state, dispatch) {
   dispatch({color: state.picture.pixel(pos.x, pos.y)});
 }
+
+/* ************************************************* Saving and Loading ************************************************* */
 
 var SaveButton = class SaveButton {
   constructor(state) {
@@ -319,6 +337,8 @@ function pictureFromImage(image) {
   return new Picture(width, height, pixels);
 }
 
+/* ************************************************* Undo History ************************************************* */
+
 function historyUpdateState(state, action) {
   if (action.undo == true) {
     if (state.done.length == 0) return state;
@@ -352,6 +372,8 @@ var UndoButton = class UndoButton {
     this.dom.disabled = state.done.length == 0;
   }
 };
+
+/* ************************************************* Let’s Draw ************************************************* */
 
 var startState = {
   tool: 'draw',
