@@ -127,7 +127,14 @@ PictureCanvas.prototype.touch = function (startEvent, onDown) {
 
 var PixelEditor = class PixelEditor {
   constructor(state, config) {
+    // tools: {draw: ƒ, fill: ƒ, rectangle: ƒ, pick: ƒ}
+    // controls: [class ToolSelect, class ColorSelect, class SaveButton, class LoadButton, class UndoButton]
+    // ƒ dispatch(action) {
+    //   state = historyUpdateState(state, action);
+    //   app.syncState(state);
+    // }
     let {tools, controls, dispatch} = config;
+    // state {tool: 'draw', color: '#000000', picture: Picture, done: Array(0), doneAt: 0}
     this.state = state;
 
     this.canvas = new PictureCanvas(state.picture, pos => {
@@ -136,11 +143,13 @@ var PixelEditor = class PixelEditor {
       if (onMove) return pos => onMove(pos, this.state);
     });
     this.controls = controls.map(Control => new Control(state, config));
+    // div -> canvas -> br -> controls
     this.dom = elt(
       'div',
       {},
       this.canvas.dom,
       elt('br'),
+      // [] = initial value
       ...this.controls.reduce((a, c) => a.concat(' ', c.dom), [])
     );
   }
@@ -168,6 +177,7 @@ var ToolSelect = class ToolSelect {
         )
       )
     );
+    // label -> select -> options
     this.dom = elt('label', null, '🖌 Tool: ', this.select);
   }
   syncState(state) {
@@ -182,6 +192,7 @@ var ColorSelect = class ColorSelect {
       value: state.color,
       onchange: () => dispatch({color: this.input.value}),
     });
+    // label -> input
     this.dom = elt('label', null, '🎨 Color: ', this.input);
   }
   syncState(state) {
@@ -189,7 +200,7 @@ var ColorSelect = class ColorSelect {
   }
 };
 
-/* ************************************************* Drawing tools ************************************************* */
+/* ************************************************* Drawing Tools ************************************************* */
 
 function draw(pos, state, dispatch) {
   function drawPixel({x, y}, state) {
