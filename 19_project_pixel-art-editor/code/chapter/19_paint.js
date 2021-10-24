@@ -229,6 +229,7 @@ function rectangle(start, state, dispatch) {
   return drawRectangle;
 }
 
+// the four pixels adjacent to the selected pixel
 var around = [
   {dx: -1, dy: 0},
   {dx: 1, dy: 0},
@@ -243,6 +244,7 @@ function fill({x, y}, state, dispatch) {
     for (let {dx, dy} of around) {
       let x = drawn[done].x + dx,
         y = drawn[done].y + dy;
+      // If adjacent pixels are within the dimensions of the image, have the same colour as the source pixel and are not yet in the drawn array, they are placed there.
       if (
         x >= 0 &&
         x < state.picture.width &&
@@ -276,12 +278,14 @@ var SaveButton = class SaveButton {
     );
   }
   save() {
+    // To create the image file, it draws the image at a scale of one pixel per pixel on a canvas element.
     let canvas = elt('canvas');
     drawPicture(this.picture, canvas, 1);
     let link = elt('a', {
       href: canvas.toDataURL(),
       download: 'pixelart.png',
     });
+    // The link to the download is added to the document, a click on it is simulated and removed again.
     document.body.appendChild(link);
     link.click();
     link.remove();
