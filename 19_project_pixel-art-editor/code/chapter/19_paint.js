@@ -334,15 +334,19 @@ function finishLoad(file, dispatch) {
 }
 
 function pictureFromImage(image) {
+  // the image size can be a maximum of 100 x 100 px
   let width = Math.min(100, image.width);
   let height = Math.min(100, image.height);
   let canvas = elt('canvas', {width, height});
   let cx = canvas.getContext('2d');
   cx.drawImage(image, 0, 0);
   let pixels = [];
+  // reads the colour information of the image and creates an array in which each pixel receives four values (RGBA)
   let {data} = cx.getImageData(0, 0, width, height);
 
   function hex(n) {
+    // toString(16) gives a string representation in hexadecimal notation
+    // padStart adds a zero if necessary so that each number consists of two digits
     return n.toString(16).padStart(2, '0');
   }
   for (let i = 0; i < data.length; i += 4) {
