@@ -74,6 +74,15 @@ function drawPicture(picture, canvas, scale) {
   }
 }
 
+function pointerPosition(pos, domNode) {
+  // position of the canvas on the screen
+  let rect = domNode.getBoundingClientRect();
+  return {
+    x: Math.floor((pos.clientX - rect.left) / scale),
+    y: Math.floor((pos.clientY - rect.top) / scale),
+  };
+}
+
 PictureCanvas.prototype.mouse = function (downEvent, onDown) {
   // a key other than the left one is pressed
   if (downEvent.button != 0) return;
@@ -93,15 +102,6 @@ PictureCanvas.prototype.mouse = function (downEvent, onDown) {
   };
   this.dom.addEventListener('mousemove', move);
 };
-
-function pointerPosition(pos, domNode) {
-  // position of the canvas on the screen
-  let rect = domNode.getBoundingClientRect();
-  return {
-    x: Math.floor((pos.clientX - rect.left) / scale),
-    y: Math.floor((pos.clientY - rect.top) / scale),
-  };
-}
 
 PictureCanvas.prototype.touch = function (startEvent, onDown) {
   let pos = pointerPosition(startEvent.touches[0], this.dom);
@@ -129,7 +129,7 @@ var PixelEditor = class PixelEditor {
   constructor(state, config) {
     // tools: {draw: ƒ, fill: ƒ, rectangle: ƒ, pick: ƒ}
     // controls: [class ToolSelect, class ColorSelect, class SaveButton, class LoadButton, class UndoButton]
-    // ƒ dispatch(action) {
+    // dispatch: ƒ dispatch(action) {
     //   state = historyUpdateState(state, action);
     //   app.syncState(state);
     // }
@@ -138,7 +138,9 @@ var PixelEditor = class PixelEditor {
     this.state = state;
 
     this.canvas = new PictureCanvas(state.picture, pos => {
+      // the selected tool returns a function
       let tool = tools[this.state.tool];
+      // tools like draw and rectangle additionally return a callback function, so that they can still be used to draw lines incessantly or to change the rectangle dimensions dynamically
       let onMove = tool(pos, this.state, dispatch);
       if (onMove) return pos => onMove(pos, this.state);
     });
@@ -153,6 +155,7 @@ var PixelEditor = class PixelEditor {
       ...this.controls.reduce((a, c) => a.concat(' ', c.dom), [])
     );
   }
+  // from here, the other components, such as the canvas or the controls, are kept up to date
   syncState(state) {
     this.state = state;
     this.canvas.syncState(state.picture);
@@ -359,6 +362,7 @@ function pictureFromImage(image) {
 /* ************************************************* Undo History ************************************************* */
 
 function historyUpdateState(state, action) {
+  // goes back one image
   if (action.undo == true) {
     if (state.done.length == 0) return state;
     return Object.assign({}, state, {
@@ -366,6 +370,7 @@ function historyUpdateState(state, action) {
       done: state.done.slice(1),
       doneAt: 0,
     });
+    // previous image is saved if the last save was more than one second ago
   } else if (action.picture && state.doneAt < Date.now() - 1000) {
     return Object.assign({}, state, action, {
       done: [state.picture, ...state.done],
