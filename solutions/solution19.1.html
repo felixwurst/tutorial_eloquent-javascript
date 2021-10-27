@@ -1,9 +1,9 @@
-<!doctype html>
-<script src="code/chapter/19_paint.js"></script>
+<!DOCTYPE html>
+<script src="../19_project_pixel-art-editor/code/chapter/19_paint.js"></script>
 
 <div></div>
 <script>
-  class PixelEditor {
+  var PixelEditor = class PixelEditor {
     constructor(state, config) {
       let {tools, controls, dispatch} = config;
       this.state = state;
@@ -15,17 +15,20 @@
           return pos => onMove(pos, this.state, dispatch);
         }
       });
-      this.controls = controls.map(
-        Control => new Control(state, config));
-      this.dom = elt("div", {
-        tabIndex: 0,
-        onkeydown: event => this.keyDown(event, config)
-      }, this.canvas.dom, elt("br"),
-         ...this.controls.reduce(
-           (a, c) => a.concat(" ", c.dom), []));
+      this.controls = controls.map(Control => new Control(state, config));
+      this.dom = elt(
+        'div',
+        {
+          tabIndex: 0,
+          onkeydown: event => this.keyDown(event, config),
+        },
+        this.canvas.dom,
+        elt('br'),
+        ...this.controls.reduce((a, c) => a.concat(' ', c.dom), [])
+      );
     }
     keyDown(event, config) {
-      if (event.key == "z" && (event.ctrlKey || event.metaKey)) {
+      if (event.key == 'z' && (event.ctrlKey || event.metaKey)) {
         event.preventDefault();
         config.dispatch({undo: true});
       } else if (!event.ctrlKey && !event.metaKey && !event.altKey) {
@@ -43,8 +46,7 @@
       this.canvas.syncState(state.picture);
       for (let ctrl of this.controls) ctrl.syncState(state);
     }
-  }
+  };
 
-  document.querySelector("div")
-    .appendChild(startPixelEditor({}));
+  document.querySelector('div').appendChild(startPixelEditor({}));
 </script>
