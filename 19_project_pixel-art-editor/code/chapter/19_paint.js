@@ -283,7 +283,7 @@ var SaveButton = class SaveButton {
   save() {
     // To create the image file, it draws the image at a scale of one pixel per pixel on a canvas element.
     let canvas = elt('canvas');
-    drawPicture(this.picture, canvas, 1);
+    drawPicture(this.picture, canvas, 10);
     let link = elt('a', {
       href: canvas.toDataURL(),
       download: 'pixelart.png',
