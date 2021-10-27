@@ -17,8 +17,7 @@
 
     <div></div>
     <script>
-      // The original PixelEditor class. Extend the constructor.
-      class PixelEditor {
+      var PixelEditor = class PixelEditor {
         constructor(state, config) {
           let {tools, controls, dispatch} = config;
           this.state = state;
@@ -33,18 +32,73 @@
           this.controls = controls.map(Control => new Control(state, config));
           this.dom = elt(
             'div',
-            {},
+            {
+              tabIndex: 0,
+              id: 'container',
+              onfocus: () => {
+                let tool = document
+                  .querySelector('#container')
+                  .addEventListener('keydown', () =>
+                    this.shortcuts(event, state)
+                  );
+                // console.log(tool);
+                // this.state.tool = tool;
+                // this.syncState(this.state);
+                // dispatch({tool: tool});
+                // console.log(this.controls[0].syncState(state));
+                // this.controls[0].syncState(state);
+              },
+              onblur: () => {
+                document
+                  .querySelector('#container')
+                  .removeEventListener('keydown', this.shortcuts);
+              },
+            },
             this.canvas.dom,
             elt('br'),
             ...this.controls.reduce((a, c) => a.concat(' ', c.dom), [])
           );
+        }
+        shortcuts(event, state) {
+          if (event.key == 'd') {
+            // console.log('draw');
+            return 'draw';
+            // this.state.tool = tool;
+            // this.controls[0].syncState(state);
+            // return dispatch({tool: 'draw'});
+            // dispatch({picture: state.picture.draw(drawn)});
+            // dispatch({picture: state.picture.draw(drawn)});
+          }
+          if (event.key == 'r') {
+            console.log('rectangle');
+            // return 'rectangle';
+            // return dispatch({tool: 'rectangle'});
+            // console.log(event);
+            console.log(state.tool);
+            // this.state.tool = 'rectangle';
+            // this.controls[0].syncState(state);
+          }
+          if (event.key == 'f') {
+            // console.log('fill');
+            return 'fill';
+          }
+          if (event.key == 'p') {
+            // console.log('pick');
+            return 'pick';
+          }
+          if (
+            (event.key == 'z' && event.ctrlKey) ||
+            (event.key == 'z' && event.metaKey)
+          ) {
+            console.log('undo');
+          }
         }
         syncState(state) {
           this.state = state;
           this.canvas.syncState(state.picture);
           for (let ctrl of this.controls) ctrl.syncState(state);
         }
-      }
+      };
 
       document.querySelector('div').appendChild(startPixelEditor({}));
     </script>
