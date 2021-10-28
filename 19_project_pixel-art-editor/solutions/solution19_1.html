@@ -34,63 +34,24 @@
             'div',
             {
               tabIndex: 0,
-              id: 'container',
-              onfocus: () => {
-                let tool = document
-                  .querySelector('#container')
-                  .addEventListener('keydown', () =>
-                    this.shortcuts(event, state)
-                  );
-                // console.log(tool);
-                // this.state.tool = tool;
-                // this.syncState(this.state);
-                // dispatch({tool: tool});
-                // console.log(this.controls[0].syncState(state));
-                // this.controls[0].syncState(state);
-              },
-              onblur: () => {
-                document
-                  .querySelector('#container')
-                  .removeEventListener('keydown', this.shortcuts);
-              },
+              onkeydown: event => this.keyDown(event, config),
             },
             this.canvas.dom,
             elt('br'),
             ...this.controls.reduce((a, c) => a.concat(' ', c.dom), [])
           );
         }
-        shortcuts(event, state) {
-          if (event.key == 'd') {
-            // console.log('draw');
-            return 'draw';
-            // this.state.tool = tool;
-            // this.controls[0].syncState(state);
-            // return dispatch({tool: 'draw'});
-            // dispatch({picture: state.picture.draw(drawn)});
-            // dispatch({picture: state.picture.draw(drawn)});
-          }
-          if (event.key == 'r') {
-            console.log('rectangle');
-            // return 'rectangle';
-            // return dispatch({tool: 'rectangle'});
-            // console.log(event);
-            console.log(state.tool);
-            // this.state.tool = 'rectangle';
-            // this.controls[0].syncState(state);
-          }
-          if (event.key == 'f') {
-            // console.log('fill');
-            return 'fill';
-          }
-          if (event.key == 'p') {
-            // console.log('pick');
-            return 'pick';
-          }
-          if (
-            (event.key == 'z' && event.ctrlKey) ||
-            (event.key == 'z' && event.metaKey)
-          ) {
-            console.log('undo');
+        keyDown(event, config) {
+          let shortcuts = {};
+          Object.keys(config.tools).forEach((tool, i) => {
+            shortcuts[tool.slice(0, 1)] = Object.keys(config.tools)[i];
+          });
+          if (shortcuts.hasOwnProperty(event.key)) {
+            event.preventDefault();
+            config.dispatch({tool: shortcuts[event.key]});
+          } else if (event.key == 'z' && (event.ctrlKey || event.metaKey)) {
+            event.preventDefault();
+            config.dispatch({undo: true});
           }
         }
         syncState(state) {
