@@ -41,17 +41,33 @@
             ...this.controls.reduce((a, c) => a.concat(' ', c.dom), [])
           );
         }
+        // version 1 with forEach
+        // keyDown(event, config) {
+        //   let shortcuts = {};
+        //   Object.keys(config.tools).forEach((tool, i) => {
+        //     shortcuts[tool.slice(0, 1)] = Object.keys(config.tools)[i];
+        //   });
+        //   if (shortcuts.hasOwnProperty(event.key)) {
+        //     event.preventDefault();
+        //     config.dispatch({tool: shortcuts[event.key]});
+        //   } else if (event.key == 'z' && (event.ctrlKey || event.metaKey)) {
+        //     event.preventDefault();
+        //     config.dispatch({undo: true});
+        //   }
+        // }
+        // version 2 with forOf
         keyDown(event, config) {
-          let shortcuts = {};
-          Object.keys(config.tools).forEach((tool, i) => {
-            shortcuts[tool.slice(0, 1)] = Object.keys(config.tools)[i];
-          });
-          if (shortcuts.hasOwnProperty(event.key)) {
-            event.preventDefault();
-            config.dispatch({tool: shortcuts[event.key]});
-          } else if (event.key == 'z' && (event.ctrlKey || event.metaKey)) {
+          if (event.key == 'z' && (event.ctrlKey || event.metaKey)) {
             event.preventDefault();
             config.dispatch({undo: true});
+          } else if (!event.ctrlKey && !event.metaKey && !event.altKey) {
+            for (const tool of Object.keys(config.tools)) {
+              if (event.key == tool[0]) {
+                event.preventDefault();
+                config.dispatch({tool});
+                return;
+              }
+            }
           }
         }
         syncState(state) {
