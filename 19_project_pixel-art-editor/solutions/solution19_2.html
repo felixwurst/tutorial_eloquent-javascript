@@ -19,14 +19,12 @@
 
     <div></div>
     <script>
-      // Change this method
       PictureCanvas.prototype.syncState = function (picture) {
         if (this.picture == picture) return;
         this.picture = picture;
         drawPicture(this.picture, this.dom, scale);
       };
 
-      // You may want to use or change this as well
       function drawPicture(picture, canvas, scale) {
         canvas.width = picture.width * scale;
         canvas.height = picture.height * scale;
