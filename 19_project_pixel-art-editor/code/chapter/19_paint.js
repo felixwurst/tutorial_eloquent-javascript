@@ -44,7 +44,7 @@ function elt(type, props, ...children) {
 
 // This component is responsible for displaying an image and transmitting pointer events on this image to the rest of the application.
 
-var scale = 10;
+var scale = 100;
 
 var PictureCanvas = class PictureCanvas {
   constructor(picture, pointerDown) {
@@ -402,7 +402,7 @@ var UndoButton = class UndoButton {
 var startState = {
   tool: 'draw',
   color: '#000000',
-  picture: Picture.empty(60, 30, '#f0f0f0'),
+  picture: Picture.empty(2, 1, '#f0f0f0'),
   done: [],
   doneAt: 0,
 };
