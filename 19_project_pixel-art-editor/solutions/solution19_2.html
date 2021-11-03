@@ -21,8 +21,11 @@
     <script>
       PictureCanvas.prototype.syncState = function (picture) {
         if (this.picture == picture) return;
+        // console.log(picture);
+        // console.log(this.picture);
+        // drawPicture(this.picture, this.dom, scale);
+        updatePicture(this.picture, picture, this.dom, scale);
         this.picture = picture;
-        drawPicture(this.picture, this.dom, scale);
       };
 
       function drawPicture(picture, canvas, scale) {
@@ -34,6 +37,33 @@
           for (let x = 0; x < picture.width; x++) {
             cx.fillStyle = picture.pixel(x, y);
             cx.fillRect(x * scale, y * scale, scale, scale);
+          }
+        }
+      }
+
+      function updatePicture(oldPicture, newPicture, canvas, scale) {
+        console.log('old:', oldPicture == undefined);
+        if (oldPicture == undefined || oldPicture.width != newPicture.width) {
+          // oldPicture = null;
+          drawPicture(newPicture, canvas, scale);
+        } else {
+          canvas.width = newPicture.width * scale;
+          canvas.height = newPicture.height * scale;
+          let cx = canvas.getContext('2d');
+
+          for (let y = 0; y < newPicture.height; y++) {
+            for (let x = 0; x < newPicture.width; x++) {
+              console.log('old:', oldPicture.pixel(x, y));
+              console.log('new:', newPicture.pixel(x, y));
+              if (oldPicture.pixel(x, y) != newPicture.pixel(x, y)) {
+                console.log('not the same');
+                cx.fillStyle = newPicture.pixel(x, y);
+                // x, y, width, height
+                cx.fillRect(x * scale, y * scale, scale, scale);
+              } else {
+                console.log('the same');
+              }
+            }
           }
         }
       }
