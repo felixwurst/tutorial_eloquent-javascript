@@ -13,8 +13,36 @@
 
     <div></div>
     <script>
-      function circle(pos, state, dispatch) {
-        // Your code here
+      function circle(start, state, dispatch) {
+        function drawCircle(to) {
+          let radius = Math.sqrt(
+            Math.pow(to.x - start.x, 2) + Math.pow(to.y - start.y, 2)
+          );
+          let radiusCeil = Math.ceil(radius);
+
+          let drawn = [];
+          for (let dy = -radiusCeil; dy <= radiusCeil; dy++) {
+            for (let dx = -radiusCeil; dx <= radiusCeil; dx++) {
+              // The distance to the examined coordinate is determined. If it is greater than the radius of the circle, i.e. outside the circumference of the circle, the coordinate is not filled.
+              let dist = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
+              if (dist > radius) continue;
+              // The coordinates on the canvas are determined. If they are outside the boundaries of the canvas, they are also not filled.
+              let x = start.x + dx,
+                y = start.y + dy;
+              if (
+                x < 0 ||
+                x >= state.picture.width ||
+                y < 0 ||
+                y >= state.picture.height
+              )
+                continue;
+              drawn.push({x, y, color: state.color});
+            }
+          }
+          dispatch({picture: state.picture.draw(drawn)});
+        }
+        drawCircle(start);
+        return drawCircle;
       }
 
       let dom = startPixelEditor({
