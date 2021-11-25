@@ -23,11 +23,53 @@
 
     <div></div>
     <script>
-      // The old draw tool. Rewrite this.
+      // function draw(pos, state, dispatch) {
+      //   function drawPixel({x, y}, state) {
+      //     let drawn = {x, y, color: state.color};
+      //     dispatch({picture: state.picture.draw([drawn])});
+      //   }
+      //   drawPixel(pos, state);
+      //   return drawPixel;
+      // }
+
       function draw(pos, state, dispatch) {
+        let previousPos = null;
         function drawPixel({x, y}, state) {
+          console.log(previousPos, {x, y});
+
+          for (let {dx, dy} of around) {
+            // console.log(dx, dy);
+            let aroundX = x + dx,
+              aroundY = y + dy;
+            // console.log(aroundX, aroundY);
+            if (previousPos) {
+              // console.log(previousPos.x, previousPos.y);
+              let dist = Math.sqrt(
+                Math.pow(aroundX - previousPos.x, 2) +
+                  Math.pow(aroundY - previousPos.y, 2)
+              );
+              console.log('dist', dist);
+            }
+
+            // let x = drawn[done].x + dx,
+            //   y = drawn[done].y + dy;
+            // if (
+            //   x >= 0 &&
+            //   x < state.picture.width &&
+            //   y >= 0 &&
+            //   y < state.picture.height &&
+            //   state.picture.pixel(x, y) == targetColor &&
+            //   !drawn.some(p => p.x == x && p.y == y)
+            // ) {
+            //   drawn.push({x, y, color: state.color});
+            // }
+          }
+
           let drawn = {x, y, color: state.color};
           dispatch({picture: state.picture.draw([drawn])});
+
+          previousPos = {x, y};
+          // console.log(previousPos, x, y);
         }
         drawPixel(pos, state);
         return drawPixel;
