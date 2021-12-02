@@ -37,38 +37,54 @@
         function drawPixel({x, y}, state) {
           console.log(previousPos, {x, y});
 
-          for (let {dx, dy} of around) {
+          let dist = 0;
+          // for (let {dx, dy} of around) {
+          //   let aroundX = x + dx,
+          //     aroundY = y + dy;
+          //   if (previousPos) {
+          //     let currentDist = Math.sqrt(
+          //       Math.pow(aroundX - previousPos.x, 2) +
+          //         Math.pow(aroundY - previousPos.y, 2)
+          //     );
+          //     if (currentDist > dist) {
+          //       dist = currentDist;
+          //     }
+          //     console.log('dist', dist);
+          //   }
+
+          //   // let x = drawn[done].x + dx,
+          //   //   y = drawn[done].y + dy;
+          //   // if (
+          //   //   x >= 0 &&
+          //   //   x < state.picture.width &&
+          //   //   y >= 0 &&
+          //   //   y < state.picture.height &&
+          //   //   state.picture.pixel(x, y) == targetColor &&
+          //   //   !drawn.some(p => p.x == x && p.y == y)
+          //   // ) {
+          //   //   drawn.push({x, y, color: state.color});
+          //   // }
+          // }
+
+          around.forEach(({dx, dy}, i) => {
             let aroundX = x + dx,
               aroundY = y + dy;
-            // console.log(aroundX, aroundY);
             if (previousPos) {
-              // console.log(previousPos.x, previousPos.y);
-              let dist = Math.sqrt(
+              let currentDist = Math.sqrt(
                 Math.pow(aroundX - previousPos.x, 2) +
                   Math.pow(aroundY - previousPos.y, 2)
               );
-              console.log('dist', dist);
+              if (currentDist > dist) {
+                dist = currentDist;
+              }
+              console.log('dist', currentDist, dist, i);
             }
-
-            // let x = drawn[done].x + dx,
-            //   y = drawn[done].y + dy;
-            // if (
-            //   x >= 0 &&
-            //   x < state.picture.width &&
-            //   y >= 0 &&
-            //   y < state.picture.height &&
-            //   state.picture.pixel(x, y) == targetColor &&
-            //   !drawn.some(p => p.x == x && p.y == y)
-            // ) {
-            //   drawn.push({x, y, color: state.color});
-            // }
-          }
+          });
 
           let drawn = {x, y, color: state.color};
           dispatch({picture: state.picture.draw([drawn])});
 
           previousPos = {x, y};
-          // console.log(previousPos, x, y);
         }
         drawPixel(pos, state);
         return drawPixel;
