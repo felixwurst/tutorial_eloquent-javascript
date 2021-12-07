@@ -32,41 +32,40 @@
       //   return drawPixel;
       // }
 
+      //   // let x = drawn[done].x + dx,
+      //   //   y = drawn[done].y + dy;
+      //   // if (
+      //   //   x >= 0 &&
+      //   //   x < state.picture.width &&
+      //   //   y >= 0 &&
+      //   //   y < state.picture.height &&
+      //   //   state.picture.pixel(x, y) == targetColor &&
+      //   //   !drawn.some(p => p.x == x && p.y == y)
+      //   // ) {
+      //   //   drawn.push({x, y, color: state.color});
+      //   // }
+      // }
+
       function draw(pos, state, dispatch) {
         let previousPos = null;
         function drawPixel({x, y}, state) {
           console.log(previousPos, {x, y});
 
-          let dist = 0;
-          // for (let {dx, dy} of around) {
-          //   let aroundX = x + dx,
-          //     aroundY = y + dy;
-          //   if (previousPos) {
-          //     let currentDist = Math.sqrt(
-          //       Math.pow(aroundX - previousPos.x, 2) +
-          //         Math.pow(aroundY - previousPos.y, 2)
-          //     );
-          //     if (currentDist > dist) {
-          //       dist = currentDist;
-          //     }
-          //     console.log('dist', dist);
-          //   }
+          // the eight pixels adjacent to the selected pixel
+          const around = [
+            {dx: -1, dy: -1},
+            {dx: 0, dy: -1},
+            {dx: 1, dy: -1},
+            {dx: -1, dy: 0},
+            {dx: 1, dy: 0},
+            {dx: -1, dy: 1},
+            {dx: 0, dy: 1},
+            {dx: 1, dy: 1},
+          ];
+          let dist = 100;
+          let nearest;
 
-          //   // let x = drawn[done].x + dx,
-          //   //   y = drawn[done].y + dy;
-          //   // if (
-          //   //   x >= 0 &&
-          //   //   x < state.picture.width &&
-          //   //   y >= 0 &&
-          //   //   y < state.picture.height &&
-          //   //   state.picture.pixel(x, y) == targetColor &&
-          //   //   !drawn.some(p => p.x == x && p.y == y)
-          //   // ) {
-          //   //   drawn.push({x, y, color: state.color});
-          //   // }
-          // }
-
-          around.forEach(({dx, dy}, i) => {
+          for (let {dx, dy} of around) {
             let aroundX = x + dx,
               aroundY = y + dy;
             if (previousPos) {
@@ -74,16 +73,28 @@
                 Math.pow(aroundX - previousPos.x, 2) +
                   Math.pow(aroundY - previousPos.y, 2)
               );
-              if (currentDist > dist) {
+              if (currentDist < dist) {
+                nearest = {x: aroundX, y: aroundY};
                 dist = currentDist;
               }
-              console.log('dist', currentDist, dist, i);
+              console.log(
+                'currentD:',
+                currentDist,
+                'shortestD:',
+                dist,
+                'x/y:',
+                nearest.x,
+                nearest.y
+              );
             }
-          });
+          }
 
-          let drawn = {x, y, color: state.color};
-          dispatch({picture: state.picture.draw([drawn])});
-
+          let drawn = [{x, y, color: state.color}];
+          if (nearest) {
+            drawn.push({x: nearest.x, y: nearest.y, color: 'red'});
+          }
+          console.log(drawn);
+          dispatch({picture: state.picture.draw(drawn)});
           previousPos = {x, y};
         }
         drawPixel(pos, state);
