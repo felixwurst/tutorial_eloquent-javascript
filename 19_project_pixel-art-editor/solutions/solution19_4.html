@@ -96,8 +96,8 @@
           {dx: 1, dy: 1},
         ];
         let dist = 100;
-        // let nearest;
-
+        let nearest;
+        console.log(previousPos);
         for (let {dx, dy} of around) {
           let aroundX = x + dx,
             aroundY = y + dy;
@@ -106,38 +106,34 @@
               Math.pow(aroundY - previousPos.y, 2)
           );
           if (currentDist < dist) {
-            let nearest = {x: aroundX, y: aroundY};
+            nearest = {x: aroundX, y: aroundY};
             dist = currentDist;
           }
         }
-        return nearest;
+        if (previousPos.x == nearest.x && previousPos.y == nearest.y) {
+          return drawn;
+          console.log('2');
+        } else {
+          drawn.push({x: nearest.x, y: nearest.y, color: 'red'});
+          // previousPos = {x, y};
+          console.log('3');
+          return findNearest(previousPos, nearest.x, nearest.y, color);
+        }
       }
 
       function draw(pos, state, dispatch) {
         let previousPos = null;
         function drawPixel({x, y}, state) {
-          console.log(previousPos, x, y);
-
-          let drawn = [{x, y, color: state.color}];
-
-          if (previousPos) {
-            let nearest = findNearest(previousPos, x, y, state.color);
-            console.log(nearest);
-            if (previousPos.x == nearest.x && previousPos.y == nearest.y) {
-              return drawn;
-            } else {
-              drawn.push({x: nearest.x, y: nearest.y, color: 'red'});
-              return findNearest(
-                previousPos,
-                nearest.x,
-                nearest.y,
-                state.color
-              );
-            }
+          // let drawn = [];
+          if (!previousPos) {
+            let drawn = [{x, y, color: state.color}];
+            dispatch({picture: state.picture.draw(drawn)});
+            previousPos = {x, y};
+          } else {
+            let drawn = findNearest(previousPos, x, y, state.color);
+            dispatch({picture: state.picture.draw(drawn)});
+            previousPos = {x, y};
           }
-
-          dispatch({picture: state.picture.draw(drawn)});
-          previousPos = {x, y};
         }
         drawPixel(pos, state);
         return drawPixel;
