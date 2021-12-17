@@ -10,15 +10,10 @@
 
   <body>
     <!-- This is a more advanced exercise than the preceding two, and it will require you to design a solution to a nontrivial problem. Make sure you have plenty of time and patience before starting to work on this exercise, and do not get discouraged by initial failures.
-
     On most browsers, when you select the draw tool and quickly drag across the picture, you don’t get a closed line. Rather, you get dots with gaps between them because the "mousemove" or "touchmove" events did not fire quickly enough to hit every pixel.
-
     Improve the draw tool to make it draw a full line. This means you have to make the motion handler function remember the previous position and connect that to the current one.
-
     To do this, since the pixels can be an arbitrary distance apart, you’ll have to write a general line drawing function.
-
     A line between two pixels is a connected chain of pixels, as straight as possible, going from the start to the end. Diagonally adjacent pixels count as a connected. So a slanted line should look like the picture on the left, not the picture on the right.
-
     Finally, if we have code that draws a line between two arbitrary points, we might as well use it to also define a line tool, which draws a straight line between the start and end of a drag. -->
 
     <div></div>
@@ -47,93 +42,53 @@
       //   // }
       // }
 
-      // function findNearest(x, y) {
-      //   // the eight pixels adjacent to the selected pixel
-      //   const around = [
-      //     {dx: -1, dy: -1},
-      //     {dx: 0, dy: -1},
-      //     {dx: 1, dy: -1},
-      //     {dx: -1, dy: 0},
-      //     {dx: 1, dy: 0},
-      //     {dx: -1, dy: 1},
-      //     {dx: 0, dy: 1},
-      //     {dx: 1, dy: 1},
-      //   ];
-      //   let dist = 100;
-      //   let nearest;
-      //   for (let {dx, dy} of around) {
-      //     let aroundX = x + dx,
-      //       aroundY = y + dy;
-      //     let currentDist = Math.sqrt(
-      //       Math.pow(aroundX - previousPos.x, 2) +
-      //         Math.pow(aroundY - previousPos.y, 2)
-      //     );
-      //     if (currentDist < dist) {
-      //       nearest = {x: aroundX, y: aroundY};
-      //       dist = currentDist;
-      //     }
-      //   }
-      //   if (previousPos.x == nearest.x && previousPos.y == nearest.y) {
-      //     return drawn;
-      //   } else {
-      //     drawn.push({x: nearest.x, y: nearest.y, color: 'red'});
-      //     return findNearest(nearest.x, nearest.y);
-      //   }
-      // }
-
-      function findNearest(previousPos, x, y, color) {
-        let drawn = [{x, y, color: color}];
-
-        // the eight pixels adjacent to the selected pixel
-        const around = [
-          {dx: -1, dy: -1},
-          {dx: 0, dy: -1},
-          {dx: 1, dy: -1},
-          {dx: -1, dy: 0},
-          {dx: 1, dy: 0},
-          {dx: -1, dy: 1},
-          {dx: 0, dy: 1},
-          {dx: 1, dy: 1},
-        ];
-        let dist = 100;
-        let nearest;
-        console.log(previousPos);
-        for (let {dx, dy} of around) {
-          let aroundX = x + dx,
-            aroundY = y + dy;
-          let currentDist = Math.sqrt(
-            Math.pow(aroundX - previousPos.x, 2) +
-              Math.pow(aroundY - previousPos.y, 2)
-          );
-          if (currentDist < dist) {
-            nearest = {x: aroundX, y: aroundY};
-            dist = currentDist;
-          }
-        }
-        if (previousPos.x == nearest.x && previousPos.y == nearest.y) {
-          return drawn;
-          console.log('2');
-        } else {
-          drawn.push({x: nearest.x, y: nearest.y, color: 'red'});
-          // previousPos = {x, y};
-          console.log('3');
-          return findNearest(previousPos, nearest.x, nearest.y, color);
-        }
-      }
-
       function draw(pos, state, dispatch) {
         let previousPos = null;
         function drawPixel({x, y}, state) {
-          // let drawn = [];
-          if (!previousPos) {
-            let drawn = [{x, y, color: state.color}];
-            dispatch({picture: state.picture.draw(drawn)});
-            previousPos = {x, y};
-          } else {
-            let drawn = findNearest(previousPos, x, y, state.color);
-            dispatch({picture: state.picture.draw(drawn)});
-            previousPos = {x, y};
+          // console.log(previousPos, x, y);
+
+          function findNearest(x, y) {
+            // the eight pixels adjacent to the selected pixel
+            const around = [
+              {dx: -1, dy: -1},
+              {dx: 0, dy: -1},
+              {dx: 1, dy: -1},
+              {dx: -1, dy: 0},
+              {dx: 1, dy: 0},
+              {dx: -1, dy: 1},
+              {dx: 0, dy: 1},
+              {dx: 1, dy: 1},
+            ];
+            let dist = 100;
+            let nearest;
+            for (let {dx, dy} of around) {
+              let aroundX = x + dx,
+                aroundY = y + dy;
+              if (previousPos) {
+                let currentDist = Math.sqrt(
+                  Math.pow(aroundX - previousPos.x, 2) +
+                    Math.pow(aroundY - previousPos.y, 2)
+                );
+                if (currentDist < dist) {
+                  nearest = {x: aroundX, y: aroundY};
+                  dist = currentDist;
+                }
+              }
+            }
+            if (previousPos.x == nearest.x && previousPos.y == nearest.y) {
+              return drawn;
+            }
+            drawn.push({x: nearest.x, y: nearest.y, color: 'red'});
+            return findNearest(nearest.x, nearest.y);
           }
+
+          let drawn = [{x, y, color: state.color}];
+          if (previousPos) {
+            drawn = findNearest(x, y);
+            // console.log(drawn);
+          }
+          dispatch({picture: state.picture.draw(drawn)});
+          previousPos = {x, y};
         }
         drawPixel(pos, state);
         return drawPixel;
@@ -141,18 +96,50 @@
 
       function line(start, state, dispatch) {
         function drawLine(pos) {
+          function buildChain(xStart, yStart, xEnd, yEnd, drawn) {
+            // let drawn = [{x: xStart, y: yStart, color: 'black'}];
+            // the eight pixels adjacent to the selected pixel
+            const around = [
+              {dx: -1, dy: -1},
+              {dx: 0, dy: -1},
+              {dx: 1, dy: -1},
+              {dx: -1, dy: 0},
+              {dx: 1, dy: 0},
+              {dx: -1, dy: 1},
+              {dx: 0, dy: 1},
+              {dx: 1, dy: 1},
+            ];
+            let dist = 100;
+            let nearest;
+            for (let {dx, dy} of around) {
+              let aroundX = xStart + dx,
+                aroundY = yStart + dy;
+              let currentDist = Math.sqrt(
+                Math.pow(xEnd - aroundX, 2) + Math.pow(yEnd - aroundY, 2)
+              );
+              if (currentDist < dist) {
+                nearest = {x: aroundX, y: aroundY};
+                // console.log(nearest);
+                dist = currentDist;
+              }
+            }
+            if (xEnd == nearest.x && yEnd == nearest.y) {
+              return drawn;
+            }
+            drawn.push({x: nearest.x, y: nearest.y, color: 'red'});
+            return buildChain(nearest.x, nearest.y, xEnd, yEnd, drawn);
+          }
+
           let xStart = Math.min(start.x, pos.x);
           let yStart = Math.min(start.y, pos.y);
           let xEnd = Math.max(start.x, pos.x);
           let yEnd = Math.max(start.y, pos.y);
-          let drawn = [];
 
-          for (let y = yStart; y <= yEnd; y++) {
-            for (let x = xStart; x <= xEnd; x++) {
-              drawn.push({x, y, color: state.color});
-            }
-          }
-
+          // let drawn = [{x, y, color: state.color}];
+          let drawn = [{x: xStart, y: yStart, color: state.color}];
+          // drawn = buildChain(xStart, yStart, xEnd, yEnd, drawn);
+          drawn.push(buildChain(xStart, yStart, xEnd, yEnd, drawn));
+          // console.log(drawn);
           dispatch({picture: state.picture.draw(drawn)});
         }
         drawLine(start);
