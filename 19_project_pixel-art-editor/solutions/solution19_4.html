@@ -28,67 +28,44 @@
       //   return drawPixel;
       // }
 
-      //   // let x = drawn[done].x + dx,
-      //   //   y = drawn[done].y + dy;
-      //   // if (
-      //   //   x >= 0 &&
-      //   //   x < state.picture.width &&
-      //   //   y >= 0 &&
-      //   //   y < state.picture.height &&
-      //   //   state.picture.pixel(x, y) == targetColor &&
-      //   //   !drawn.some(p => p.x == x && p.y == y)
-      //   // ) {
-      //   //   drawn.push({x, y, color: state.color});
-      //   // }
-      // }
+      function buildChain(xStart, yStart, xEnd, yEnd, drawn) {
+        // the eight pixels adjacent to the selected pixel
+        const around = [
+          {dx: -1, dy: -1},
+          {dx: 0, dy: -1},
+          {dx: 1, dy: -1},
+          {dx: -1, dy: 0},
+          {dx: 1, dy: 0},
+          {dx: -1, dy: 1},
+          {dx: 0, dy: 1},
+          {dx: 1, dy: 1},
+        ];
+        let dist = 100;
+        let nearest;
+        for (let {dx, dy} of around) {
+          let aroundX = xStart + dx,
+            aroundY = yStart + dy;
+          let currentDist = Math.sqrt(
+            Math.pow(xEnd - aroundX, 2) + Math.pow(yEnd - aroundY, 2)
+          );
+          if (currentDist < dist) {
+            nearest = {x: aroundX, y: aroundY};
+            dist = currentDist;
+          }
+        }
+        if (xEnd == nearest.x && yEnd == nearest.y) return drawn;
+        drawn.push({x: nearest.x, y: nearest.y, color: 'red'});
+        return buildChain(nearest.x, nearest.y, xEnd, yEnd, drawn);
+      }
 
       function draw(pos, state, dispatch) {
-        let previousPos = null;
+        let prevPos = null;
         function drawPixel({x, y}, state) {
-          // console.log(previousPos, x, y);
-
-          function findNearest(x, y) {
-            // the eight pixels adjacent to the selected pixel
-            const around = [
-              {dx: -1, dy: -1},
-              {dx: 0, dy: -1},
-              {dx: 1, dy: -1},
-              {dx: -1, dy: 0},
-              {dx: 1, dy: 0},
-              {dx: -1, dy: 1},
-              {dx: 0, dy: 1},
-              {dx: 1, dy: 1},
-            ];
-            let dist = 100;
-            let nearest;
-            for (let {dx, dy} of around) {
-              let aroundX = x + dx,
-                aroundY = y + dy;
-              if (previousPos) {
-                let currentDist = Math.sqrt(
-                  Math.pow(aroundX - previousPos.x, 2) +
-                    Math.pow(aroundY - previousPos.y, 2)
-                );
-                if (currentDist < dist) {
-                  nearest = {x: aroundX, y: aroundY};
-                  dist = currentDist;
-                }
-              }
-            }
-            if (previousPos.x == nearest.x && previousPos.y == nearest.y) {
-              return drawn;
-            }
-            drawn.push({x: nearest.x, y: nearest.y, color: 'red'});
-            return findNearest(nearest.x, nearest.y);
-          }
-
           let drawn = [{x, y, color: state.color}];
-          if (previousPos) {
-            drawn = findNearest(x, y);
-            // console.log(drawn);
-          }
+          if (prevPos)
+            drawn.push(buildChain(prevPos.x, prevPos.y, x, y, drawn));
           dispatch({picture: state.picture.draw(drawn)});
-          previousPos = {x, y};
+          prevPos = {x, y};
         }
         drawPixel(pos, state);
         return drawPixel;
@@ -96,50 +73,8 @@
 
       function line(start, state, dispatch) {
         function drawLine(pos) {
-          function buildChain(xStart, yStart, xEnd, yEnd, drawn) {
-            // let drawn = [{x: xStart, y: yStart, color: 'black'}];
-            // the eight pixels adjacent to the selected pixel
-            const around = [
-              {dx: -1, dy: -1},
-              {dx: 0, dy: -1},
-              {dx: 1, dy: -1},
-              {dx: -1, dy: 0},
-              {dx: 1, dy: 0},
-              {dx: -1, dy: 1},
-              {dx: 0, dy: 1},
-              {dx: 1, dy: 1},
-            ];
-            let dist = 100;
-            let nearest;
-            for (let {dx, dy} of around) {
-              let aroundX = xStart + dx,
-                aroundY = yStart + dy;
-              let currentDist = Math.sqrt(
-                Math.pow(xEnd - aroundX, 2) + Math.pow(yEnd - aroundY, 2)
-              );
-              if (currentDist < dist) {
-                nearest = {x: aroundX, y: aroundY};
-                // console.log(nearest);
-                dist = currentDist;
-              }
-            }
-            if (xEnd == nearest.x && yEnd == nearest.y) {
-              return drawn;
-            }
-            drawn.push({x: nearest.x, y: nearest.y, color: 'red'});
-            return buildChain(nearest.x, nearest.y, xEnd, yEnd, drawn);
-          }
-
-          let xStart = Math.min(start.x, pos.x);
-          let yStart = Math.min(start.y, pos.y);
-          let xEnd = Math.max(start.x, pos.x);
-          let yEnd = Math.max(start.y, pos.y);
-
-          // let drawn = [{x, y, color: state.color}];
-          let drawn = [{x: xStart, y: yStart, color: state.color}];
-          // drawn = buildChain(xStart, yStart, xEnd, yEnd, drawn);
-          drawn.push(buildChain(xStart, yStart, xEnd, yEnd, drawn));
-          // console.log(drawn);
+          let drawn = [{x: start.x, y: start.y, color: state.color}];
+          drawn.push(buildChain(start.x, start.y, pos.x, pos.y, drawn));
           dispatch({picture: state.picture.draw(drawn)});
         }
         drawLine(start);
