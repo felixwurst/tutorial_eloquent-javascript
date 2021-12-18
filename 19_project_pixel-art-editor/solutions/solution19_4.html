@@ -18,54 +18,104 @@
 
     <div></div>
     <script>
-      function drawLine(from, to, line) {
-        // the eight pixels adjacent to the selected pixel
-        const around = [
-          {dx: -1, dy: -1},
-          {dx: 0, dy: -1},
-          {dx: 1, dy: -1},
-          {dx: -1, dy: 0},
-          {dx: 1, dy: 0},
-          {dx: -1, dy: 1},
-          {dx: 0, dy: 1},
-          {dx: 1, dy: 1},
-        ];
-        let dist = 100;
-        let nearest;
-        for (let {dx, dy} of around) {
-          let aroundX = from.x + dx,
-            aroundY = from.y + dy;
-          let currentDist = Math.sqrt(
-            Math.pow(to.x - aroundX, 2) + Math.pow(to.y - aroundY, 2)
-          );
-          if (currentDist < dist) {
-            nearest = {x: aroundX, y: aroundY};
-            dist = currentDist;
+      // function drawLine(from, to, line) {
+      //   // the eight pixels adjacent to the selected pixel
+      //   const around = [
+      //     {dx: -1, dy: -1},
+      //     {dx: 0, dy: -1},
+      //     {dx: 1, dy: -1},
+      //     {dx: -1, dy: 0},
+      //     {dx: 1, dy: 0},
+      //     {dx: -1, dy: 1},
+      //     {dx: 0, dy: 1},
+      //     {dx: 1, dy: 1},
+      //   ];
+      //   let dist = 100;
+      //   let nearest;
+      //   for (let {dx, dy} of around) {
+      //     let aroundX = from.x + dx,
+      //       aroundY = from.y + dy;
+      //     let currentDist = Math.sqrt(
+      //       Math.pow(to.x - aroundX, 2) + Math.pow(to.y - aroundY, 2)
+      //     );
+      //     if (currentDist < dist) {
+      //       nearest = {x: aroundX, y: aroundY};
+      //       dist = currentDist;
+      //     }
+      //   }
+      //   if (to.x == nearest.x && to.y == nearest.y) return line;
+      //   line.push({x: nearest.x, y: nearest.y, color: 'red'});
+      //   return drawLine(nearest, to, line);
+      // }
+
+      // function draw(pos, state, dispatch) {
+      //   function connect(newPos, state) {
+      //     let line = [{x: newPos.x, y: newPos.y, color: state.color}];
+      //     line.push(drawLine(pos, newPos, line));
+      //     pos = newPos;
+      //     dispatch({picture: state.picture.draw(line)});
+      //   }
+      //   connect(pos, state);
+      //   return connect;
+      // }
+
+      // function line(start, state, dispatch) {
+      //   function connect(pos) {
+      //     let line = [{x: start.x, y: start.y, color: state.color}];
+      //     line.push(drawLine(start, pos, line));
+      //     dispatch({picture: state.picture.draw(line)});
+      //   }
+      //   connect(start);
+      //   return connect;
+      // }
+
+      function drawLine(from, to, color) {
+        let points = [];
+        if (Math.abs(to.x - from.x) > Math.abs(to.y - from.y)) {
+          // horizontal
+          if (from.x - to.x < 0) {
+            console.log('right');
+          } else {
+            console.log('left');
+            [from.x, to.x] = [to.x, from.x];
           }
+          console.log(to.x - from.x);
+          let slope = from.y - to.y / from.x - to.x;
+          // console.log(slope);
+          for (let i = 0; i < array.length; i++) {
+            points.push();
+          }
+        } else {
+          // vertical
+          if (from.y - to.y < 0) {
+            console.log('down');
+          } else {
+            console.log('top');
+            [from.y, to.y] = [to.y, from.y];
+          }
+          console.log(to.y - from.y);
+          let slope = from.x - to.x / from.y - to.y;
+          // console.log(slope);
         }
-        if (to.x == nearest.x && to.y == nearest.y) return line;
-        line.push({x: nearest.x, y: nearest.y, color: 'red'});
-        return drawLine(nearest, to, line);
+        return points;
       }
 
       function draw(pos, state, dispatch) {
         function connect(newPos, state) {
-          let line = [{x: newPos.x, y: newPos.y, color: state.color}];
-          line.push(drawLine(pos, newPos, line));
+          let line = drawLine(pos, newPos, state.color);
           pos = newPos;
-          dispatch({picture: state.picture.draw(line)});
+          // dispatch({picture: state.picture.draw(line)});
         }
         connect(pos, state);
         return connect;
       }
 
-      function line(start, state, dispatch) {
-        function connect(pos) {
-          let line = [{x: start.x, y: start.y, color: state.color}];
-          line.push(drawLine(start, pos, line));
+      function line(pos, state, dispatch) {
+        function connect(newPos, state) {
+          let line = drawLine(pos, newPos, state.color);
           dispatch({picture: state.picture.draw(line)});
         }
-        connect(start);
+        connect(pos, state);
         return connect;
       }
 
