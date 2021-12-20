@@ -79,11 +79,10 @@
             console.log('left');
             [from.x, to.x] = [to.x, from.x];
           }
-          console.log(to.x - from.x);
-          let slope = from.y - to.y / from.x - to.x;
-          // console.log(slope);
-          for (let i = 0; i < array.length; i++) {
-            points.push();
+          let slope = (to.y - from.y) / (to.x - from.x);
+          for (let x = from.x; x <= to.x; x++) {
+            let point = {x, y: from.y + Math.round(x * slope), color};
+            points.push(point);
           }
         } else {
           // vertical
@@ -93,9 +92,11 @@
             console.log('top');
             [from.y, to.y] = [to.y, from.y];
           }
-          console.log(to.y - from.y);
-          let slope = from.x - to.x / from.y - to.y;
-          // console.log(slope);
+          let slope = (to.x - from.x) / (to.y - from.y);
+          for (let y = from.y; y <= to.y; y++) {
+            let point = {x: from.x + Math.round(y * slope), y, color};
+            points.push(point);
+          }
         }
         return points;
       }
@@ -104,7 +105,7 @@
         function connect(newPos, state) {
           let line = drawLine(pos, newPos, state.color);
           pos = newPos;
-          // dispatch({picture: state.picture.draw(line)});
+          dispatch({picture: state.picture.draw(line)});
         }
         connect(pos, state);
         return connect;
