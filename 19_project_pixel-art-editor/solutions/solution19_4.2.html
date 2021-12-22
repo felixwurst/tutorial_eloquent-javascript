@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Proper Lines</title>
+  </head>
+  <script src="../code/chapter/19_paint.js"></script>
+
+  <body>
+    <!-- This is a more advanced exercise than the preceding two, and it will require you to design a solution to a nontrivial problem. Make sure you have plenty of time and patience before starting to work on this exercise, and do not get discouraged by initial failures.
+    On most browsers, when you select the draw tool and quickly drag across the picture, you don’t get a closed line. Rather, you get dots with gaps between them because the "mousemove" or "touchmove" events did not fire quickly enough to hit every pixel.
+    Improve the draw tool to make it draw a full line. This means you have to make the motion handler function remember the previous position and connect that to the current one.
+    To do this, since the pixels can be an arbitrary distance apart, you’ll have to write a general line drawing function.
+    A line between two pixels is a connected chain of pixels, as straight as possible, going from the start to the end. Diagonally adjacent pixels count as a connected. So a slanted line should look like the picture on the left, not the picture on the right.
+    Finally, if we have code that draws a line between two arbitrary points, we might as well use it to also define a line tool, which draws a straight line between the start and end of a drag. -->
+
+    <div></div>
+    <script>
+      // The function is used by the draw and the line tool. It is examined whether it is a horizontal or a vertical line. Then it is determined in which direction it goes and if necessary the coordinates are swapped to get positive values. The loop runs along the predominant direction and adds a value to the other axis according to the slope and rounds the result.
+      function drawLine(from, to, color) {
+        let points = [];
+        // horizontal or vertical?
+        if (Math.abs(to.x - from.x) > Math.abs(to.y - from.y)) {
+          // which direction? from left to right or from right to left?
+          if (from.x > to.x) [from, to] = [to, from];
+          let slope = (to.y - from.y) / (to.x - from.x);
+          // the loop runs along the x-axis and adds a value to the y-axis according to the slope and rounds the result
+          for (let {x, y} = from; x <= to.x; x++) {
+            points.push({x, y: Math.round(y), color});
+            y += slope;
+          }
+        } else {
+          // which direction? from top to bottom or from bottom to top?
+          if (from.y > to.y) [from, to] = [to, from];
+          let slope = (to.x - from.x) / (to.y - from.y);
+          // the loop runs along the y-axis and adds a value to the x-axis according to the slope and rounds the result
+          for (let {x, y} = from; y <= to.y; y++) {
+            points.push({x: Math.round(x), y, color});
+            x += slope;
+          }
+        }
+        return points;
+      }
+
+      // draws pixels as soon as I pressed the left mouse button
+      function draw(pos, state, dispatch) {
+        function connect(newPos, state) {
+          let line = drawLine(pos, newPos, state.color);
+          pos = newPos;
+          dispatch({picture: state.picture.draw(line)});
+        }
+        connect(pos, state);
+        return connect;
+      }
+
+      // draws a straight line between the start and end of a drag
+      function line(pos, state, dispatch) {
+        return end => {
+          let line = drawLine(pos, end, state.color);
+          dispatch({picture: state.picture.draw(line)});
+        };
+      }
+
+      // add the line tool to the tools of the editor
+      let dom = startPixelEditor({
+        tools: {draw, line, fill, rectangle, pick},
+      });
+      document.querySelector('div').appendChild(dom);
+    </script>
+  </body>
+</html>

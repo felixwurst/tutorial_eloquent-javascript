@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Proper Lines</title>
+  </head>
+  <script src="../code/chapter/19_paint.js"></script>
+
+  <body>
+    <!-- This is a more advanced exercise than the preceding two, and it will require you to design a solution to a nontrivial problem. Make sure you have plenty of time and patience before starting to work on this exercise, and do not get discouraged by initial failures.
+    On most browsers, when you select the draw tool and quickly drag across the picture, you don’t get a closed line. Rather, you get dots with gaps between them because the "mousemove" or "touchmove" events did not fire quickly enough to hit every pixel.
+    Improve the draw tool to make it draw a full line. This means you have to make the motion handler function remember the previous position and connect that to the current one.
+    To do this, since the pixels can be an arbitrary distance apart, you’ll have to write a general line drawing function.
+    A line between two pixels is a connected chain of pixels, as straight as possible, going from the start to the end. Diagonally adjacent pixels count as a connected. So a slanted line should look like the picture on the left, not the picture on the right.
+    Finally, if we have code that draws a line between two arbitrary points, we might as well use it to also define a line tool, which draws a straight line between the start and end of a drag. -->
+
+    <div></div>
+    <script>
+      // The function is used by the draw and the line tool. It takes the eight adjacent pixels of the starting pixel and examines which one is closest to the ending pixel. This is taken next until there is no gap between the two original pixels.
+      function drawLine(from, to, line) {
+        const around = [
+          {dx: -1, dy: -1},
+          {dx: 0, dy: -1},
+          {dx: 1, dy: -1},
+          {dx: -1, dy: 0},
+          {dx: 1, dy: 0},
+          {dx: -1, dy: 1},
+          {dx: 0, dy: 1},
+          {dx: 1, dy: 1},
+        ];
+        let dist = 100;
+        let nearest;
+        for (let {dx, dy} of around) {
+          let aroundX = from.x + dx,
+            aroundY = from.y + dy;
+          let currentDist = Math.sqrt(
+            Math.pow(to.x - aroundX, 2) + Math.pow(to.y - aroundY, 2)
+          );
+          if (currentDist < dist) {
+            nearest = {x: aroundX, y: aroundY};
+            dist = currentDist;
+          }
+        }
+        if (to.x == nearest.x && to.y == nearest.y) return line;
+        line.push({x: nearest.x, y: nearest.y, color: 'red'});
+        return drawLine(nearest, to, line);
+      }
+
+      // draws pixels as soon as I pressed the left mouse button
+      function draw(pos, state, dispatch) {
+        function connect(newPos, state) {
+          let line = [{x: newPos.x, y: newPos.y, color: state.color}];
+          line.push(drawLine(pos, newPos, line));
+          pos = newPos;
+          dispatch({picture: state.picture.draw(line)});
+        }
+        connect(pos, state);
+        return connect;
+      }
+
+      // draws a straight line between the start and end of a drag
+      function line(start, state, dispatch) {
+        function connect(pos) {
+          let line = [{x: start.x, y: start.y, color: state.color}];
+          line.push(drawLine(start, pos, line));
+          dispatch({picture: state.picture.draw(line)});
+        }
+        connect(start);
+        return connect;
+      }
+
+      // add the line tool to the tools of the editor
+      let dom = startPixelEditor({
+        tools: {draw, line, fill, rectangle, pick},
+      });
+      document.querySelector('div').appendChild(dom);
+    </script>
+  </body>
+</html>
