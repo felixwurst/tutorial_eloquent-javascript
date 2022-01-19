@@ -8,4 +8,28 @@
 
 // Use asynchronous or synchronous file system functions as you see fit. Setting things up so that multiple asynchronous actions are requested at the same time might speed things up a little, but not a huge amount, since most file systems can read only one thing at a time.
 
-console.log(process.argv);
+const {stat, readFile, readdir} = require('fs').promises;
+const {sep} = require('path');
+
+async function search(files) {
+  let regexp = new RegExp(process.argv[2]);
+  let baseDirectory = process.cwd();
+
+  for (const file of files) {
+    let stats = await stat(file);
+    if (stats.isDirectory()) {
+      console.log('directory');
+      let dir = await readdir(baseDirectory + sep + file);
+      console.log(dir);
+      // search(dir);
+    } else {
+      let text = await readFile(file, 'utf8');
+      if (regexp.test(text)) {
+        console.log(file);
+      }
+    }
+  }
+}
+
+// let files = process.argv.slice(3);
+search(process.argv.slice(3));
