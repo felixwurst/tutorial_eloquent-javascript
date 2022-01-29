@@ -18,7 +18,22 @@ Don’t work directly in the code exposed by the file server since if you make a
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>A public space on the web</title>
+    <title>A Public Space on the Web</title>
   </head>
-  <body></body>
+  <body>
+    <h1>A Public Space on the Web</h1>
+    <p>
+      This is a self-editing website. Select a file, edit it, and save to update
+      the website.
+    </p>
+    <p>
+      Files:
+      <select id="fileList"></select>
+    </p>
+    <p>
+      <textarea id="file" style="width: 100%; height: 300px"></textarea>
+      <button onclick="saveFile()">Save</button>
+    </p>
+    <script src="public_space.js"></script>
+  </body>
 </html>
