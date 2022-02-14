@@ -1,4 +1,4 @@
-var {parse} = require("url");
+var {parse} = require('url');
 
 module.exports = class Router {
   constructor() {
