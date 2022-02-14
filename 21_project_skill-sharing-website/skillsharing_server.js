@@ -1,5 +1,3 @@
-/* **************************************** already existing code **************************************** */
-
 var {createServer} = require('http');
 var Router = require('./router');
 var ecstatic = require('ecstatic');
@@ -161,26 +159,11 @@ SkillShareServer.prototype.waitForChanges = function (time) {
   });
 };
 
-/* **************************************** updated code **************************************** */
-
-const {writeFile} = require('fs');
-
-const fileName = './talks.json';
-
-function loadTalks() {
-  try {
-  } catch (err) {}
-}
-
 SkillShareServer.prototype.updated = function () {
   this.version++;
   let response = this.talkResponse();
   this.waiting.forEach(resolve => resolve(response));
   this.waiting = [];
-
-  writeFile(fileName, JSON.stringify(this.talks), function (err) {
-    if (err) throw err;
-  });
 };
 
-new SkillShareServer(Object.create(loadTalks())).start(8000);
+new SkillShareServer(Object.create(null)).start(8000);
