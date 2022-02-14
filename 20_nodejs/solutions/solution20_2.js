@@ -4,7 +4,7 @@
 
 // Add support for the MKCOL method (“make collection”), which should create a directory by calling mkdir from the fs module. MKCOL is not a widely used HTTP method, but it does exist for this same purpose in the WebDAV standard, which specifies a set of conventions on top of HTTP that make it suitable for creating documents.
 
-/* ************************************************** already existing code ************************************************** */
+/* **************************************** already existing code **************************************** */
 
 const {createServer} = require('http');
 
@@ -98,7 +98,7 @@ methods.PUT = async function (request) {
   return {status: 204};
 };
 
-/* ************************************************** newly added code ************************************************** */
+/* **************************************** newly added code **************************************** */
 
 const {mkdir} = require('fs').promises;
 
