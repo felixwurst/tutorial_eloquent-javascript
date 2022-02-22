@@ -1,3 +1,5 @@
+// This is a redifinition of the skillsharing_server component in this chapter
+
 /* **************************************** already existing code **************************************** */
 
 var {createServer} = require('http');
