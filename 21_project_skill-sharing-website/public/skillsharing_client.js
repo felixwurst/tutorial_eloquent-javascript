@@ -160,10 +160,6 @@ async function pollTalks(update) {
   }
 }
 
-class Talk {
-  constructor() {}
-}
-
 var SkillShareApp = class SkillShareApp {
   constructor(state, dispatch) {
     this.dispatch = dispatch;
