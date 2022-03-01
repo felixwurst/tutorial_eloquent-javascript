@@ -4,50 +4,56 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Find Paths</title>
+    <title>Finding Paths</title>
     <script src="../draw_layout.js"></script>
     <script src="../chapter/22_fast.js"></script>
   </head>
   <body>
-    <!-- Pfade finden
+    <!-- Finding paths
 
-    Schreiben Sie die Funktion findPath, die wie diejenige aus Kapitel 7 versucht, den kürzesten Weg zwischen zwei Knoten in einem Graphen zu finden. Sie soll zwei GraphNode-Objekte (wie wir sie in diesem Kapitel verwendet haben) als Argumente entgegennehmen und entweder null zurückgeben, wenn kein Pfad zu finden ist, oder ein Array der Knoten, die einen Pfad durch den Graphen darstellen. Knoten, die in diesem Array nebeneinanderstehen, sollen durch eine Kante verbunden sein.
+    Write the findPath function, which, like the one in Chapter 7, attempts to find the shortest path between two nodes in a graph. It should take two GraphNode objects (like the one we used in this chapter) as arguments and return either null if no path is to be found, or an array of the nodes that represent a path through the graph. Nodes that are adjacent in this array are said to be connected by an edge.
     
-    Ein guter Algorithmus, um einen Pfad in einem Graphen zu finden, sieht wie folgt aus:
+    A good algorithm for finding a path in a graph is as follows:
     
-    1. Erstelle eine Arbeitsliste, die einen einzigen Pfad enthält, wobei dieser Pfad wiederum nur aus dem Startknoten besteht.
-    2. Beginne mit dem ersten Pfad in der Arbeitsliste.
-    3. Wenn der Knoten am Ende des aktuellen Pfades der Zielknoten ist, gibt den Pfad zurück.
-    4. Anderenfalls erstelle für jeden noch nicht untersuchten Nachbar des Knotens am Ende des Pfades (also für jeden Nachbar, der bei keinem der Pfade in der Arbeitsliste am Ende steht) einen neuen Pfad. Erweitere dazu den aktuellen Pfad um den Nachbar und füge ihn der Arbeitsliste hinzu.
-    5. Stehen mehrere Pfade in der Arbeitsliste, gehe zum nächsten Pfad über und fahre mit Schritt 3 fort.
-    6. Anderenfalls gibt es keinen Pfad.
+    1. Create a worklist containing a single path, where this path again consists only of the starting node.
+    2. Start with the first path in the worklist.
+    3. If the node at the end of the current path is the destination node, return the path.
+    4. Otherwise, create a new path for each unexamined neighbor of the node at the end of the path (that is, for each neighbor that is not at the end of any of the paths in the worklist). To do this, add the neighbor to the current path and add it to the worklist. 
+    5. If there are several paths in the worklist, go to the next path and continue with step 3.
+    6. Otherwise there is no path.
     
-    Durch Auffächern vom Startknoten aus sorgt diese Vorgehensweise dafür, dass der Zielknoten immer über den kürzesten Pfad erreicht wird, da längere Pfade erst berücksichtigt werden, wenn die kürzeren bereits untersucht wurden.
+    By fanning out from the start node, this procedure ensures that the destination node is always reached via the shortest path, since longer paths are not considered until the shorter ones have already been explored.
     
-    Implementieren Sie dieses Programm und testen Sie es mit einigen einfachen Baumgraphen. Konstruieren Sie einen Graphen mit einer zyklischen Verbindung (z. B. indem Sie mit der Methode connect Kanten zu einem Baumgraphen hinzufügen) und prüfen Sie, ob Ihre Funktion den kürzesten Pfad findet, wenn es mehrere Möglichkeiten gibt. -->
+    Implement this program and test it with some simple tree graphs. Construct a graph with a cyclic connection (e.g., using the connect method to add edges to a tree graph) and see if your function finds the shortest path when there are multiple possibilities. -->
 
     <script>
-      // function findRoute(graph, from, to) {
-      //   let work = [{at: from, route: []}];
+      // first working version
+      // function findPath(from, to) {
+      //   let work = [{at: from, route: [from]}];
       //   for (let i = 0; i < work.length; i++) {
       //     let {at, route} = work[i];
-      //     for (let place of graph[at]) {
-      //       if (place == to) return route.concat(place);
-      //       if (!work.some(w => w.at == place)) {
-      //         work.push({at: place, route: route.concat(place)});
+      //     if (route[route.length - 1] == to) return route;
+      //     for (let edge of at.edges) {
+      //       if (!work.some(w => w.route[route.length - 1] == edge)) {
+      //         work.push({at: edge, route: route.concat(edge)});
       //       }
       //     }
       //   }
       // }
 
-      function findPath(from, to) {
-        let work = [{at: from, route: [from]}];
-        for (let i = 0; i < work.length; i++) {
-          let {at, route} = work[i];
-          if (route[route.length - 1] == to) return route;
-          for (let edge of at.edges) {
-            if (!work.some(w => w.route[route.length - 1] == edge)) {
-              work.push({at: edge, route: route.concat(edge)});
+      // optimized version
+      function findPath(a, b) {
+        // the worklist contains only one path at the beginning, consisting of the start node
+        let work = [[a]];
+        for (let path of work) {
+          let end = path[path.length - 1];
+          // the path is returned if the last node of the examined path corresponds to the destination node
+          if (end == b) return path;
+          // the neighbors of the last node of the path are examined
+          for (let next of end.edges) {
+            // the neighbor is placed at the end of the path, if it is not already doing so for any other path
+            if (!work.some(path => path[path.length - 1] == next)) {
+              work.push(path.concat([next]));
             }
           }
         }
