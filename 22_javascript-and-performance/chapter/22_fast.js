@@ -1,7 +1,6 @@
 var GraphNode = class GraphNode {
   constructor() {
-    this.pos = new Vec(Math.random() * 1000,
-                       Math.random() * 1000);
+    this.pos = new Vec(Math.random() * 1000, Math.random() * 1000);
     this.edges = [];
   }
   connect(other) {
@@ -11,14 +10,16 @@ var GraphNode = class GraphNode {
   hasEdge(other) {
     return this.edges.includes(other);
   }
-}
+};
 
 function treeGraph(depth, branches) {
   let graph = [new GraphNode()];
   if (depth > 1) {
     for (let i = 0; i < branches; i++) {
       let subGraph = treeGraph(depth - 1, branches);
+      // Stores the information of the connected nodes in the edges array of the objects
       graph[0].connect(subGraph[0]);
+      // Creates a new array from the two arrays
       graph = graph.concat(subGraph);
     }
   }
@@ -101,7 +102,7 @@ function forceDirected_skip(graph) {
   }
 }
 
-GraphNode.prototype.hasEdgeFast = function(other) {
+GraphNode.prototype.hasEdgeFast = function (other) {
   for (let i = 0; i < this.edges.length; i++) {
     if (this.edges[i] === other) return true;
   }
@@ -142,10 +143,12 @@ function forceDirected_noVector(graph) {
       if (hasEdge) {
         forceSize += (distance - springLength) * springStrength;
       }
-      let forceX = apartX * forceSize / distance;
-      let forceY = apartY * forceSize / distance;
-      node.pos.x += forceX; node.pos.y += forceY;
-      other.pos.x -= forceX; other.pos.y -= forceY;
+      let forceX = (apartX * forceSize) / distance;
+      let forceY = (apartY * forceSize) / distance;
+      node.pos.x += forceX;
+      node.pos.y += forceY;
+      other.pos.x -= forceX;
+      other.pos.y -= forceY;
     }
   }
 }
