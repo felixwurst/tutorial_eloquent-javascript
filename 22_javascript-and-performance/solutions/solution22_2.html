@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Timing</title>
+    <script src="../draw_layout.js"></script>
+    <script src="../chapter/22_fast.js"></script>
+  </head>
+  <body>
+    <!-- Timing
+
+    Messen Sie mit Date.now(), wie lange Ihre Funktion findPath braucht, um in einem komplizierteren Graphen einen Pfad zu finden. Da treeGraph die Wurzel an den Anfang des Graphen-Arrays legt und ein Blatt ans Ende, können Sie Ihrer Funktion auf folgende Weise eine nichttriviale Aufgabe erteilen:
+
+    let graph = treeGraph(6, 6);
+    console.log(findPath(graph[0], graph[graph.length - 1]).length);
+    // → 6
+
+    Konstruieren Sie einen Testfall mit einer Laufzeit von etwa einer halben Sekunde. Seien Sie vorsichtig, wenn Sie größere Zahlen an treeGraph übergeben. Da die Größe des Graphen exponentiell zunimmt, können Sie den Graphen dadurch leicht so groß machen, dass es sehr viel Zeit und Arbeitsspeicher erfordert, um darin einen Pfad zu finden. -->
+    <script>
+      function findPath(a, b) {
+        let work = [[a]];
+        for (let path of work) {
+          let end = path[path.length - 1];
+          if (end == b) return path;
+          for (let next of end.edges) {
+            if (!work.some(path => path[path.length - 1] == next)) {
+              work.push(path.concat([next]));
+            }
+          }
+        }
+      }
+
+      function time(findPath, graph) {
+        let startTime = Date.now();
+        console.log(startTime);
+        let root = graph[0],
+          leaf = graph[graph.length - 1];
+        console.log(findPath(root, leaf).length);
+      }
+
+      let graph = treeGraph(4, 4);
+      runLayout(forceDirected_noVector, graph);
+      time(findPath, graph);
+    </script>
+  </body>
+</html>
