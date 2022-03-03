@@ -34,10 +34,14 @@
 
       function time(findPath, graph) {
         let startTime = Date.now();
-        console.log(startTime);
         let root = graph[0],
           leaf = graph[graph.length - 1];
-        console.log(findPath(root, leaf).length);
+        let result = findPath(root, leaf);
+        console.log(
+          `Path with a length of ${result.length} was found in ${
+            Date.now() - startTime
+          } ms`
+        );
       }
 
       let graph = treeGraph(4, 4);
