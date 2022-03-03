@@ -56,7 +56,7 @@ function runLayout(implementation, graph) {
     time += Date.now() - startTime;
     drawGraph(graph);
 
-    if (steps == 0) console.log(time);
+    if (steps == 0) console.log(`Graph drawn in ${time} ms`);
     else requestAnimationFrame(() => run(steps - 100, time));
   }
   run(4000, 0);
