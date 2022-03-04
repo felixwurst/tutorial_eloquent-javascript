@@ -1,5 +1,55 @@
-/* Optimierung
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Optimizing</title>
+    <script src="../draw_layout.js"></script>
+    <script src="../chapter/22_fast.js"></script>
+  </head>
+  <body>
+    <!-- Optimizing
 
-Nachdem Ihnen nun Messungen für einen Testfall vorliegen, versuchen Sie Möglichkeiten zu finden, um findPath schneller zu machen.
+    Nachdem Ihnen nun Messungen für einen Testfall vorliegen, versuchen Sie Möglichkeiten zu finden, um findPath schneller zu machen.
 
-Bedenken Sie dabei sowohl die Makrooptimierung (weniger Arbeit verrichten) als auch die Mikrooptimierung (die gegebene Arbeit auf weniger aufwendige Weise verrichten). Suchen Sie auch nach Möglichkeiten, um weniger Arbeitsspeicher zu verbrauchen und weniger oder kleinere Datenstrukturen zuzuweisen. */
+    Bedenken Sie dabei sowohl die Makrooptimierung (weniger Arbeit verrichten) als auch die Mikrooptimierung (die gegebene Arbeit auf weniger aufwendige Weise verrichten). Suchen Sie auch nach Möglichkeiten, um weniger Arbeitsspeicher zu verbrauchen und weniger oder kleinere Datenstrukturen zuzuweisen. 
+  
+    
+    Now that you have measurements for a test case, try to find ways to make findPath faster.
+
+    Consider both macro-optimization (doing less work) and micro-optimization (doing the given work in a less costly way). Also look for ways to use less memory and allocate fewer or smaller data structures. -->
+
+    <script>
+      function time(findPath) {
+        let graph = treeGraph(6, 6);
+        let startTime = Date.now();
+        let result = findPath(graph[0], graph[graph.length - 1]);
+        console.log(
+          `Path with a length of ${result.length} was found in ${
+            Date.now() - startTime
+          } ms`
+        );
+      }
+
+      function findPath(a, b) {
+        let work = [[a]];
+        for (let path of work) {
+          let end = path[path.length - 1];
+          if (end == b) return path;
+          for (let next of end.edges) {
+            if (!work.some(path => path[path.length - 1] == next)) {
+              work.push(path.concat([next]));
+            }
+          }
+        }
+      }
+      time(findPath);
+      // → Path with a length of 6 was found in 859 ms
+
+      // Makrooptimierung (weniger Arbeit verrichten)
+
+      // Mikrooptimierung (die gegebene Arbeit auf weniger aufwendige Weise verrichten)
+    </script>
+  </body>
+</html>
