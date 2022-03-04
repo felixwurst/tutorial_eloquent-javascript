@@ -11,13 +11,14 @@
   <body>
     <!-- Timing
 
-    Messen Sie mit Date.now(), wie lange Ihre Funktion findPath braucht, um in einem komplizierteren Graphen einen Pfad zu finden. Da treeGraph die Wurzel an den Anfang des Graphen-Arrays legt und ein Blatt ans Ende, können Sie Ihrer Funktion auf folgende Weise eine nichttriviale Aufgabe erteilen:
+    Use Date.now() to measure how long it takes your findPath function to find a path in a more complicated graph. Since treeGraph puts the root at the beginning of the graph array and a leaf at the end, you can give your function a nontrivial task in the following way:
 
     let graph = treeGraph(6, 6);
     console.log(findPath(graph[0], graph[graph.length - 1]).length);
     // → 6
+  
+    Construct a test case with a runtime of about half a second. Be careful when passing larger numbers to treeGraph. Since the size of the graph increases exponentially, this can easily make the graph so large that it takes a lot of time and memory to find a path in it. -->
 
-    Konstruieren Sie einen Testfall mit einer Laufzeit von etwa einer halben Sekunde. Seien Sie vorsichtig, wenn Sie größere Zahlen an treeGraph übergeben. Da die Größe des Graphen exponentiell zunimmt, können Sie den Graphen dadurch leicht so groß machen, dass es sehr viel Zeit und Arbeitsspeicher erfordert, um darin einen Pfad zu finden. -->
     <script>
       function findPath(a, b) {
         let work = [[a]];
@@ -32,11 +33,11 @@
         }
       }
 
-      function time(findPath, graph) {
+      function time(findPath) {
+        let graph = treeGraph(6, 6);
         let startTime = Date.now();
-        let root = graph[0],
-          leaf = graph[graph.length - 1];
-        let result = findPath(root, leaf);
+        // treeGraph puts the root at the beginning of the graph array and a leaf at the end
+        let result = findPath(graph[0], graph[graph.length - 1]);
         console.log(
           `Path with a length of ${result.length} was found in ${
             Date.now() - startTime
@@ -44,9 +45,10 @@
         );
       }
 
-      let graph = treeGraph(4, 4);
-      runLayout(forceDirected_noVector, graph);
-      time(findPath, graph);
+      time(findPath);
+      // → Path with a length of 4 was found in 2 ms
+      // → Path with a length of 5 was found in 17 ms
+      // → Path with a length of 6 was found in 859 ms
     </script>
   </body>
 </html>
