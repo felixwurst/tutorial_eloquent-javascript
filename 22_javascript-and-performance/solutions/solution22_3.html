@@ -27,6 +27,7 @@
         );
       }
 
+      // not optimized version
       function findPath(a, b) {
         let work = [[a]];
         for (let path of work) {
@@ -43,6 +44,7 @@
       // → Path with a length of 6 was found in 859 ms
 
       // macro-optimization (doing less work)
+      // Previously, the worklist was scanned to see if the node is already there. Now, the nodes that have already been looked at are placed in a set. This check is considerably faster.
       function findPath_set(a, b) {
         let work = [[a]];
         let reached = new Set([a]);
@@ -61,8 +63,13 @@
       // → Path with a length of 6 was found in 23 ms
 
       // micro-optimization (doing the given work in a less costly way)
-      // look for ways to use less memory and allocate fewer or smaller data structures
+      // Previously, for the array of the path was extended with the method concat, thereby the entire array is copied.
+      // Now the data structure of a list is used, where several extensions of a list can share common data.
+      // The paths are stored in an object with the properties at and via, where at is the last node in the path and via is another object of this type with the rest of the path.
       // path {at: GraphNode, via: {at: GraphNode, via: {at: GraphNode, via: null}}}
+      // To extend a path, it is now only necessary to create an object with these two properties instead of copying an entire array.
+
+      // The list, before being returned, is converted into a real array
       function pathToArray(path) {
         let result = [];
         for (; path; path = path.via) {
