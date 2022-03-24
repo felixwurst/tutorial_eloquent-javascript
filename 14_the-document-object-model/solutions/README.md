@@ -2,7 +2,7 @@
 
 An HTML table is built with the following tag structure:
 
-```bash
+```html
 <table>
   <tr>
     <th>name</th>
