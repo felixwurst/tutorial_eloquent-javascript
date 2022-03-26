@@ -5,11 +5,12 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Efficient Drawing</title>
+    <script src="../code/chapter/19_paint.js"></script>
   </head>
-  <script src="../code/chapter/19_paint.js"></script>
-
   <body>
-    <!-- During drawing, the majority of work that our application does happens in drawPicture. Creating a new state and updating the rest of the DOM isn’t very expensive, but repainting all the pixels on the canvas is quite a bit of work.
+    <!-- Efficient Drawing
+      
+    During drawing, the majority of work that our application does happens in drawPicture. Creating a new state and updating the rest of the DOM isn’t very expensive, but repainting all the pixels on the canvas is quite a bit of work.
 
     Find a way to make the syncState method of PictureCanvas faster by redrawing only the pixels that actually changed.
 

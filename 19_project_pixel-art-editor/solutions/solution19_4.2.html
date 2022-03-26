@@ -5,11 +5,12 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Proper Lines</title>
+    <script src="../code/chapter/19_paint.js"></script>
   </head>
-  <script src="../code/chapter/19_paint.js"></script>
-
   <body>
-    <!-- This is a more advanced exercise than the preceding two, and it will require you to design a solution to a nontrivial problem. Make sure you have plenty of time and patience before starting to work on this exercise, and do not get discouraged by initial failures.
+    <!-- Proper Lines
+      
+    This is a more advanced exercise than the preceding two, and it will require you to design a solution to a nontrivial problem. Make sure you have plenty of time and patience before starting to work on this exercise, and do not get discouraged by initial failures.
     On most browsers, when you select the draw tool and quickly drag across the picture, you don’t get a closed line. Rather, you get dots with gaps between them because the "mousemove" or "touchmove" events did not fire quickly enough to hit every pixel.
     Improve the draw tool to make it draw a full line. This means you have to make the motion handler function remember the previous position and connect that to the current one.
     To do this, since the pixels can be an arbitrary distance apart, you’ll have to write a general line drawing function.

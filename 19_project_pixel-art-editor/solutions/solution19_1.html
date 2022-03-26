@@ -5,11 +5,12 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Keyboard Bindings</title>
+    <script src="../code/chapter/19_paint.js"></script>
   </head>
-  <script src="../code/chapter/19_paint.js"></script>
-
   <body>
-    <!-- Add keyboard shortcuts to the application. The first letter of a tool’s name selects the tool, and control-Z or command-Z activates undo.
+    <!-- Keyboard Bindings
+      
+    Add keyboard shortcuts to the application. The first letter of a tool’s name selects the tool, and control-Z or command-Z activates undo.
 
     Do this by modifying the PixelEditor component. Add a tabIndex property of 0 to the wrapping <div> element so that it can receive keyboard focus. Note that the property corresponding to the tabindex attribute is called tabIndex, with a capital I, and our elt function expects property names. Register the key event handlers directly on that element. This means you have to click, touch, or tab to the application before you can interact with it with the keyboard.
 
@@ -41,6 +42,7 @@
             ...this.controls.reduce((a, c) => a.concat(' ', c.dom), [])
           );
         }
+
         // version 1 with forEach
         // keyDown(event, config) {
         //   let shortcuts = {};
@@ -55,6 +57,7 @@
         //     config.dispatch({undo: true});
         //   }
         // }
+
         // version 2 with forOf
         keyDown(event, config) {
           if (event.key == 'z' && (event.ctrlKey || event.metaKey)) {
