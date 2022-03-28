@@ -9,7 +9,7 @@
 /* **************************************** already existing code **************************************** */
 
 var {createServer} = require('http');
-var Router = require('../../router');
+var Router = require('../router');
 var ecstatic = require('ecstatic');
 
 var router = new Router();
